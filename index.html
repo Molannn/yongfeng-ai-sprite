@@ -1,0 +1,1222 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>永豐AI精靈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f4f3ef;color:#0b0b0b;font-family:'Noto Sans TC',system-ui,sans-serif}
+a{color:#256abf}a:hover{color:#104281}
+.card{background:#fcfcfb;border:1px solid #e2e0da;border-radius:14px;padding:20px;box-sizing:border-box;min-width:0}
+.h2{font-size:17px;font-weight:700;margin:0}
+.muted{color:#52514e}
+.small{font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#f0efec;font-size:13px;color:#0b0b0b;white-space:nowrap}
+.btn{min-height:44px;padding:0 18px;border-radius:10px;border:1px solid #c9c7bf;background:#fcfcfb;color:#0b0b0b;font:inherit;font-size:14px;cursor:pointer}
+.btn:hover{filter:brightness(0.96)}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.pii{background:#fde7c3;border-bottom:2px solid #c77700;border-radius:3px;padding:0 2px}
+.tok{background:#cde2fb;color:#0d366b;border-radius:3px;padding:0 2px;font-weight:500}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:500;color:#52514e;padding:10px 12px;border-bottom:1px solid #e2e0da;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #eeece6;vertical-align:top}
+textarea,input{font:inherit}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/x-template" id="tpl">
+
+<!-- ===================== 登入 ===================== -->
+<sc-if value="{{isLogin}}" hint-placeholder-val="{{ true }}">
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box">
+    <div class="card" style="width: 420px; max-width: 100%; display: flex; flex-direction: column; gap: 16px; padding: 32px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
+        </div>
+        <div>
+          <h1 style="margin: 0; font-size: 22px">永豐AI精靈</h1>
+          <div class="small muted">員工 AI 行為治理系統</div>
+        </div>
+      </div>
+      <label for="emp-id" style="font-weight: 500">工號</label>
+      <input id="emp-id" value="{{empInput}}" onChange="{{onEmp}}" placeholder="例如 S12345" autocomplete="username" style="min-height: 48px; padding: 0 14px; border: 1px solid #c9c7bf; border-radius: 10px; font-size: 16px; background: #ffffff">
+      <sc-if value="{{hasLoginErr}}" hint-placeholder-val="{{ false }}">
+        <div class="small" role="alert" style="color: #a12b2b">查無此工號，請再確認。</div>
+      </sc-if>
+      <button class="btn" onClick="{{doLogin}}" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 500">以工號登入</button>
+      <div class="small muted" style="line-height: 1.7">正式版以行內單一登入（SSO）驗證工號。原型可點選示範帳號：</div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <sc-for list="{{demoAccounts}}" as="da" hint-placeholder-count="2">
+          <button class="btn" onClick="{{da.fill}}" style="text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 8px">
+            <span class="mono">{{da.id}}</span><span class="small muted">{{da.desc}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ===================== 主系統 ===================== -->
+<sc-if value="{{isApp}}" hint-placeholder-val="{{ false }}">
+<div style="max-width: 1280px; margin: 0 auto; padding: 24px 20px 120px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
+      </div>
+      <div>
+        <h1 style="margin: 0; font-size: 22px">永豐AI精靈</h1>
+        <div class="small muted">{{modeSubtitle}}</div>
+      </div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+      <span class="chip" style="background: #fff4d6; color: #6b4a00">原型示意・資料皆為虛構</span>
+      <span class="chip"><span class="mono">{{me.id}}</span>{{me.name}}・{{me.title}}</span>
+      <sc-if value="{{me.isAdmin}}" hint-placeholder-val="{{ false }}">
+        <div role="group" aria-label="切換身分" style="display: inline-flex; border: 1px solid #c9c7bf; border-radius: 10px; overflow: hidden">
+          <button onClick="{{toUser}}" aria-pressed="{{userPressed}}" style="min-height: 44px; padding: 0 14px; border: none; font: inherit; font-size: 14px; cursor: pointer; background: {{userBtnBg}}; color: {{userBtnFg}}">使用者</button>
+          <button onClick="{{toAdmin}}" aria-pressed="{{adminPressed}}" style="min-height: 44px; padding: 0 14px; border: none; font: inherit; font-size: 14px; cursor: pointer; background: {{adminBtnBg}}; color: {{adminBtnFg}}">管理員</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{isUserMode}}" hint-placeholder-val="{{ true }}">
+        <button class="btn" onClick="{{toggleDash}}">{{dashToggleLabel}}</button>
+      </sc-if>
+      <button class="btn" onClick="{{logout}}">登出</button>
+    </div>
+  </header>
+
+  <sc-if value="{{isUserMode}}" hint-placeholder-val="{{ true }}">
+    <section aria-label="示範風險分級" style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 12px; background: #fcfcfb; border: 1px dashed #c9c7bf">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline">
+        <span style="font-weight: 500">示範：不同風險等級，精靈的反應不同</span>
+        <span class="small muted">只有第 3、4 級會跳出通知，其餘只記錄</span>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{tierDemos}}" as="td" hint-placeholder-count="4">
+          <button class="btn" onClick="{{td.pick}}" style="display: inline-flex; align-items: center; gap: 8px"><span class="dot" style="background: {{td.color}}"></span>{{td.label}}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{hasDemoNote}}" hint-placeholder-val="{{ false }}">
+        <div class="small" role="status" style="padding: 8px 12px; border-radius: 8px; background: #f0efec">{{demoNote}}</div>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <!-- 隱藏 dashboard 時的日常工作畫面 -->
+  <sc-if value="{{showWork}}" hint-placeholder-val="{{ false }}">
+    <section class="card" style="display: flex; flex-direction: column; gap: 14px; min-height: 420px">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap">
+        <h2 class="h2">行內 GAI 助理（模擬日常工作畫面）</h2>
+        <span class="small muted">Dashboard 已隱藏，精靈仍在右下角</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; max-width: 720px">
+        <div style="align-self: flex-end; background: #e8f1fc; padding: 12px 14px; border-radius: 12px; line-height: 1.7">請幫我把這封客戶來函整理成三點摘要，並草擬回覆。</div>
+        <div style="align-self: flex-start; background: #f0efec; padding: 12px 14px; border-radius: 12px; line-height: 1.7">已整理如下：一、【姓名1】詢問帳戶限制原因；二、希望了解解除條件；三、要求書面回覆。回覆草稿已產生，請確認後使用。</div>
+      </div>
+      <div class="small muted" style="margin-top: auto">試試上方的示範按鈕，或點右下角精靈。需要時再開啟 Dashboard。</div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showDash}}" hint-placeholder-val="{{ true }}">
+  <div style="display: flex; flex-direction: column; gap: 18px">
+    <nav aria-label="功能分頁" style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+        <button class="btn" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="background: {{t.bg}}; color: {{t.fg}}; border-color: {{t.bd}}; font-weight: 500">{{t.label}}</button>
+      </sc-for>
+    </nav>
+
+    <!-- ========== 使用者：總覽 ========== -->
+    <sc-if value="{{isOverview}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <sc-for list="{{userKpis}}" as="k" hint-placeholder-count="4">
+            <div class="card" style="display: flex; flex-direction: column; gap: 6px">
+              <div class="muted small">{{k.label}}</div>
+              <div style="font-size: 32px; font-weight: 700; line-height: 1.1">{{k.value}}</div>
+              <div class="muted small">{{k.note}}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px">
+          <section class="card" style="display: flex; flex-direction: column; gap: 14px">
+            <div>
+              <h2 class="h2">Token 用量追蹤</h2>
+              <div class="muted small" style="margin-top: 4px">本月 182,400 / 配額 300,000 tokens</div>
+            </div>
+            <div aria-label="本月配額使用 61%" style="height: 14px; background: #f0efec; border-radius: 4px">
+              <div style="height: 14px; width: 61%; background: #2a78d6; border-radius: 4px"></div>
+            </div>
+            <div class="small muted">已用 61%，依目前速度月底約用到 88%</div>
+            <div class="small" style="padding: 8px 12px; border-radius: 8px; background: #f0efec">用途：成本管理與異常偵測，不作為績效考核依據。</div>
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <sc-for list="{{myTokenBars}}" as="b" hint-placeholder-count="4">
+                <div title="{{b.tip}}" style="display: grid; grid-template-columns: 150px minmax(0, 1fr) 72px; gap: 10px; align-items: center">
+                  <div class="small">{{b.label}}</div>
+                  <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+                  <div class="small mono" style="text-align: right">{{b.value}}</div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <h2 class="h2">風險分級說明與本週分布</h2>
+            <sc-for list="{{tierRows}}" as="tr" hint-placeholder-count="4">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 10px 12px; border-radius: 10px; background: #f6f5f1">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; font-weight: 500"><span class="dot" style="background: {{tr.color}}"></span>{{tr.label}}</div>
+                  <div class="small muted" style="margin-top: 2px">{{tr.handling}}</div>
+                  <div class="small" style="margin-top: 2px">例：{{tr.example}}</div>
+                </div>
+                <div class="mono" style="font-weight: 500">{{tr.mine}} 次</div>
+              </div>
+            </sc-for>
+            <div class="small muted" style="line-height: 1.6">分級架構參考歐盟《人工智慧法》的四級風險分類，並依金管會《金融業運用 AI 指引》的風險基礎方法，改為以「員工的 AI 行為」為對象分級。</div>
+          </section>
+        </div>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="h2">最近的 AI 行動</h2>
+          <div style="overflow-x: auto">
+            <table class="tbl">
+              <thead><tr><th>時間</th><th>風險等級</th><th>發起者</th><th>工具</th><th>任務</th><th>Token</th></tr></thead>
+              <tbody>
+                <sc-for list="{{recent}}" as="r" hint-placeholder-count="4">
+                  <tr><td class="mono">{{r.time}}</td><td><span class="chip"><span class="dot" style="background: {{r.tierColor}}"></span>{{r.tierShort}}</span></td><td>{{r.originLabel}}</td><td>{{r.tool}}</td><td>{{r.task}}</td><td class="mono">{{r.tokensFmt}}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- ========== 使用者：去識別化 ========== -->
+    <sc-if value="{{isDeid}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-end">
+            <div>
+              <h2 class="h2">貼上要交給 AI 的內容</h2>
+              <div class="muted small" style="margin-top: 4px">試著修改下方文字，系統會即時偵測敏感資料</div>
+            </div>
+            <div style="display: flex; gap: 8px">
+              <button class="btn" onClick="{{useSample}}">使用範例</button>
+              <button class="btn" onClick="{{clearInput}}">清空</button>
+            </div>
+          </div>
+          <label for="deid-input" class="small muted">輸入內容</label>
+          <textarea id="deid-input" value="{{input}}" onChange="{{onInput}}" rows="6" style="width: 100%; box-sizing: border-box; padding: 14px; border: 1px solid #c9c7bf; border-radius: 10px; background: #ffffff; font-size: 15px; line-height: 1.7; resize: vertical"></textarea>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+            <span class="small muted">偵測到：</span>
+            <sc-for list="{{piiChips}}" as="c" hint-placeholder-count="4">
+              <span class="chip"><span class="pii">{{c.label}}</span> × {{c.count}}</span>
+            </sc-for>
+            <sc-if value="{{noPii}}" hint-placeholder-val="{{ false }}"><span class="chip">未偵測到敏感資料</span></sc-if>
+          </div>
+        </section>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px">
+          <section class="card" style="display: flex; flex-direction: column; gap: 10px">
+            <h2 class="h2">① 原文標記</h2>
+            <div class="muted small">黃色為偵測到的個人資料，滑鼠移上可看類型</div>
+            <div style="white-space: pre-wrap; line-height: 1.9; font-size: 15px"><sc-for list="{{origSegs}}" as="s" hint-placeholder-count="3"><sc-if value="{{s.hit}}" hint-placeholder-val="{{ false }}"><span class="pii" title="{{s.tip}}">{{s.text}}</span></sc-if><sc-if value="{{s.plain}}" hint-placeholder-val="{{ true }}"><span>{{s.text}}</span></sc-if></sc-for></div>
+          </section>
+          <section class="card" style="display: flex; flex-direction: column; gap: 10px">
+            <h2 class="h2">② 實際送給 AI 的內容</h2>
+            <div class="muted small">個資換成代碼，對應表只存在你的電腦，不會送出</div>
+            <div style="white-space: pre-wrap; line-height: 1.9; font-size: 15px"><sc-for list="{{maskedSegs}}" as="s" hint-placeholder-count="3"><sc-if value="{{s.hit}}" hint-placeholder-val="{{ false }}"><span class="tok" title="{{s.tip}}">{{s.text}}</span></sc-if><sc-if value="{{s.plain}}" hint-placeholder-val="{{ true }}"><span>{{s.text}}</span></sc-if></sc-for></div>
+          </section>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px">
+          <section class="card" style="display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+              <h2 class="h2">③ AI 回覆</h2>
+              <button class="btn" onClick="{{toggleRestore}}" aria-pressed="{{restoredStr}}">{{restoreLabel}}</button>
+            </div>
+            <div class="muted small">{{restoreHint}}</div>
+            <div style="white-space: pre-wrap; line-height: 1.9; font-size: 15px; background: #ffffff; border: 1px solid #e2e0da; border-radius: 10px; padding: 14px"><sc-for list="{{replySegs}}" as="s" hint-placeholder-count="3"><sc-if value="{{s.hit}}" hint-placeholder-val="{{ false }}"><span class="{{s.cls}}">{{s.text}}</span></sc-if><sc-if value="{{s.plain}}" hint-placeholder-val="{{ true }}"><span>{{s.text}}</span></sc-if></sc-for></div>
+          </section>
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <h2 class="h2">風險等級與工具建議</h2>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span class="dot" style="background: {{level.color}}; width: 14px; height: 14px"></span>
+              <span style="font-size: 20px; font-weight: 700">{{level.label}}</span>
+            </div>
+            <div class="small" style="line-height: 1.7">{{level.reason}}</div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <sc-for list="{{level.routes}}" as="rt" hint-placeholder-count="3">
+                <div style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: #f6f5f1">
+                  <span class="dot" style="background: {{rt.color}}"></span>
+                  <span style="font-weight: 500; min-width: 72px">{{rt.verdict}}</span>
+                  <span class="small">{{rt.tool}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ========== 使用者：Agent 行為翻譯 ========== -->
+    <sc-if value="{{isAgent}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <section class="card" style="display: flex; flex-direction: column; gap: 14px">
+          <div>
+            <h2 class="h2">任務：家事宣告名單查找</h2>
+            <div class="muted small" style="margin-top: 4px">你按下執行：「查找本週司法院公告的監護、輔助宣告名單，比對本行客戶並更新帳戶狀態」，以下是 AI 實際做的每一步</div>
+          </div>
+          <div aria-label="資料流向" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span class="small muted">資料流向：</span>
+            <sc-for list="{{flow}}" as="f" hint-placeholder-count="5">
+              <span style="display: inline-flex; align-items: center; gap: 8px">
+                <span class="chip" style="background: {{f.bg}}; color: {{f.fg}}; font-weight: 500">{{f.label}}</span>
+                <sc-if value="{{f.arrow}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" class="muted">→</span></sc-if>
+              </span>
+            </sc-for>
+          </div>
+          <div class="small" style="display: flex; flex-wrap: wrap; gap: 16px">
+            <span class="muted">橘色框為本行以外的資料來源</span>
+            <span>本任務共使用 <span class="mono">23,190</span> tokens</span>
+          </div>
+        </section>
+        <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+          <sc-for list="{{steps}}" as="st" hint-placeholder-count="5">
+            <li class="card" style="display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; border-color: {{st.border}}">
+              <div class="mono" style="width: 44px; height: 44px; border-radius: 50%; background: #f0efec; display: flex; align-items: center; justify-content: center; font-weight: 700">{{st.n}}</div>
+              <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+                  <div style="font-weight: 700; font-size: 16px">{{st.title}}</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                    <span class="chip"><span class="dot" style="background: {{st.tierColor}}"></span>{{st.tierLabel}}</span>
+                    <span class="chip mono">{{st.tokens}} tokens</span>
+                    <span class="chip">{{st.status}}</span>
+                  </div>
+                </div>
+                <div style="line-height: 1.7"><span class="muted small">白話說明：</span>{{st.plain}}</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+                  <span class="small muted">用到的技術：</span>
+                  <sc-for list="{{st.tags}}" as="tg" hint-placeholder-count="2"><span class="chip mono" style="background: #e8f1fc; color: #104281">{{tg}}</span></sc-for>
+                </div>
+                <div class="small" style="display: flex; flex-wrap: wrap; gap: 16px">
+                  <span><span class="muted">執行位置：</span>{{st.where}}</span>
+                  <span><span class="muted">處理資料：</span>{{st.data}}</span>
+                </div>
+                <sc-if value="{{st.isGate}}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; border-radius: 10px; background: {{st.gateBg}}; align-items: center">
+                    <span style="font-weight: 500; flex: 1 1 260px">{{st.gateText}}</span>
+                  </div>
+                </sc-if>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </div>
+    </sc-if>
+
+    <!-- ========== 使用者：浮水印與帳本 ========== -->
+    <sc-if value="{{isLedger}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px">
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+              <h2 class="h2">工號浮水印</h2>
+              <div style="display: flex; gap: 8px">
+                <button class="btn" onClick="{{wmVisible}}" aria-pressed="{{wmVisPressed}}" style="background: {{wmVisBg}}; color: {{wmVisFg}}">可見層</button>
+                <button class="btn" onClick="{{wmInvisible}}" aria-pressed="{{wmInvPressed}}" style="background: {{wmInvBg}}; color: {{wmInvFg}}">隱形層</button>
+              </div>
+            </div>
+            <div style="position: relative; overflow: hidden; border: 1px solid #e2e0da; border-radius: 10px; background: #ffffff; padding: 28px; min-height: 260px">
+              <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px">
+                <div style="font-weight: 700; font-size: 18px">客戶來函回覆（草稿）</div>
+                <div class="small muted mono">文件編號 T-20261019-0007</div>
+                <div style="line-height: 1.8">【姓名1】您好：<br>關於您詢問帳戶限制一事，本行係依法院監護宣告辦理。如需解除，請檢附法院撤銷宣告之裁定。</div>
+                <div style="line-height: 1.8">本回覆由 AI 產生初稿，經工號 {{me.id}} 審閱。</div>
+              </div>
+              <sc-if value="{{wmIsVisible}}" hint-placeholder-val="{{ true }}">
+                <div aria-hidden="true" style="position: absolute; inset: -40%; z-index: 2; pointer-events: none; transform: rotate(-24deg); display: flex; flex-direction: column; justify-content: center; gap: 46px">
+                  <sc-for list="{{wmRows}}" as="w" hint-placeholder-count="8"><div class="mono" style="white-space: nowrap; color: rgba(37, 106, 191, 0.16); font-size: 15px; letter-spacing: 1px">{{w}}</div></sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <sc-if value="{{wmIsInvisible}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 10px; background: #f6f5f1">
+                <div class="small" style="line-height: 1.7">隱形層把工號、時間與任務編號編碼成零寬字元，藏在文字之間。複製貼上後仍可解碼，可見浮水印被裁掉也能追溯。</div>
+                <button class="btn" onClick="{{trace}}" style="align-self: flex-start">模擬：這份文件在外部被發現</button>
+                <sc-if value="{{traced}}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 6px 12px; font-size: 14px">
+                    <span class="muted">工號</span><span class="mono">{{me.id}}</span>
+                    <span class="muted">下載時間</span><span class="mono">2026/10/19 14:32</span>
+                    <span class="muted">來源任務</span><span>客戶來函回覆（T-20261019-0007）</span>
+                    <span class="muted">帳本雜湊</span><span class="mono">{{lastHash}}</span>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </section>
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <h2 class="h2">誰負責？審閱簽核</h2>
+            <div class="small muted">每份 AI 產出都要有人掛名，權責才清楚</div>
+            <sc-for list="{{signoff}}" as="sg" hint-placeholder-count="3">
+              <div style="display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 12px; align-items: start">
+                <span class="dot" style="background: {{sg.color}}; margin-top: 6px"></span>
+                <div><div style="font-weight: 500">{{sg.role}}</div><div class="small muted">{{sg.detail}}</div></div>
+              </div>
+            </sc-for>
+          </section>
+        </div>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+            <div>
+              <h2 class="h2">個人 AI 帳本</h2>
+              <div class="muted small" style="margin-top: 4px">每筆紀錄包含前一筆的雜湊值，任何一筆被改動，後面整串都會對不上</div>
+            </div>
+            <button class="btn" onClick="{{verify}}">驗證帳本完整性</button>
+          </div>
+          <sc-if value="{{verified}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #e9f6e9"><span class="dot" style="background: #0ca30c"></span><span>完整：{{ledgerCount}} 筆紀錄的雜湊鏈全部吻合，未被竄改。</span></div>
+          </sc-if>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{originStats}}" as="os" hint-placeholder-count="3"><span class="chip" style="background: {{os.bg}}; color: {{os.fg}}; font-weight: 500">{{os.label}}：{{os.count}} 筆</span></sc-for>
+          </div>
+          <div role="group" aria-label="依發起者篩選" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{originFilters}}" as="ft" hint-placeholder-count="4"><button class="btn" onClick="{{ft.pick}}" aria-pressed="{{ft.pressed}}" style="background: {{ft.bg}}; color: {{ft.fg}}">{{ft.label}}</button></sc-for>
+          </div>
+          <div style="overflow-x: auto">
+            <table class="tbl">
+              <thead><tr><th>編號</th><th>時間</th><th>風險</th><th>發起者</th><th>指令者（主要責任）</th><th>核准者</th><th>上層任務</th><th>工具</th><th>任務</th><th>Token</th><th>產出去向</th><th>本筆雜湊</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ledgerShown}}" as="r" hint-placeholder-count="5">
+                  <tr><td class="mono">{{r.id}}</td><td class="mono">{{r.time}}</td><td><span class="chip"><span class="dot" style="background: {{r.tierColor}}"></span>{{r.tierShort}}</span></td><td><span class="chip" style="background: {{r.originBg}}; color: {{r.originFg}}; font-weight: 500">{{r.originLabel}}</span></td><td>{{r.principal}}</td><td>{{r.approver}}</td><td class="mono">{{r.parent}}</td><td>{{r.tool}}</td><td>{{r.task}}</td><td class="mono">{{r.tokensFmt}}</td><td>{{r.out}}</td><td class="mono">{{r.hash}}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- ========== 使用者：Skill 市場 ========== -->
+    <sc-if value="{{isMarket}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-end">
+            <div>
+              <h2 class="h2">行內 Skill 市場</h2>
+              <div class="muted small" style="margin-top: 4px">同仁開發、經四道關卡審核上架的 AI Skill。依上架範圍，你可見 {{visibleCount}} 個，全行共 {{totalSkills}} 個。</div>
+              <div class="small" style="margin-top: 6px">Skill 本身瑕疵由開發者負主要責任，審核主管依個案歸責；使用錯誤由下指令者負責。</div>
+            </div>
+          </div>
+          <div role="group" aria-label="依開放範圍篩選" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{scopeFilters}}" as="sf" hint-placeholder-count="4"><button class="btn" onClick="{{sf.pick}}" aria-pressed="{{sf.pressed}}" style="background: {{sf.bg}}; color: {{sf.fg}}">{{sf.label}}</button></sc-for>
+          </div>
+        </section>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+          <sc-for list="{{skillCards}}" as="sk" hint-placeholder-count="4">
+            <article class="card" style="display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; justify-content: space-between; gap: 8px; align-items: flex-start">
+                <h3 style="margin: 0; font-size: 16px">{{sk.name}}</h3>
+                <span class="chip" style="background: {{sk.scopeBg}}; color: {{sk.scopeFg}}">{{sk.scopeLabel}}</span>
+              </div>
+              <div class="small" style="line-height: 1.7">{{sk.desc}}</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                <span class="chip"><span class="dot" style="background: {{sk.tierColor}}"></span>{{sk.tierShort}}</span>
+                <span class="chip">{{sk.author}}</span>
+                <span class="chip mono">{{sk.downloads}} 次下載</span>
+              </div>
+              <button class="btn" onClick="{{sk.toggle}}" aria-pressed="{{sk.installedStr}}" style="margin-top: auto; background: {{sk.btnBg}}; color: {{sk.btnFg}}; border-color: {{sk.btnBd}}">{{sk.btnLabel}}</button>
+            </article>
+          </sc-for>
+        </div>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="h2">上架我的 Skill</h2>
+          <div class="small muted">示範：「受監護名單比對檢核表」。上架時須附權限聲明（存取哪些資料、執行哪些動作），依序通過 AI 程式審查、權限檢驗、資安檢驗（不得連外網），最後由主管人工審核。</div>
+          <div role="group" aria-label="選擇開放範圍" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{publishScopes}}" as="ps" hint-placeholder-count="3"><button class="btn" onClick="{{ps.pick}}" aria-pressed="{{ps.pressed}}" style="background: {{ps.bg}}; color: {{ps.fg}}">{{ps.label}}</button></sc-for>
+          </div>
+          <button class="btn" onClick="{{submitSkill}}" style="align-self: flex-start; background: {{accent}}; border-color: {{accent}}; color: #ffffff">送出上架申請</button>
+          <sc-if value="{{hasPublishMsg}}" hint-placeholder-val="{{ false }}"><div class="small" role="status" style="padding: 10px 14px; border-radius: 10px; background: #f0efec">{{publishMsg}}</div></sc-if>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- ========== 管理員：團隊總覽 ========== -->
+    <sc-if value="{{isTeam}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <sc-for list="{{adminKpis}}" as="k" hint-placeholder-count="4">
+            <div class="card" style="display: flex; flex-direction: column; gap: 6px">
+              <div class="muted small">{{k.label}}</div>
+              <div style="font-size: 32px; font-weight: 700; line-height: 1.1">{{k.value}}</div>
+              <div class="muted small">{{k.note}}</div>
+            </div>
+          </sc-for>
+        </div>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <div>
+            <h2 class="h2">下屬 AI 行為</h2>
+            <div class="small muted" style="margin-top: 4px">主管可看到直屬同仁的行為中繼資料（工具、風險等級、Token）。對話原文需經稽核授權才能調閱。</div>
+          </div>
+          <div style="overflow-x: auto">
+            <table class="tbl">
+              <thead><tr><th>工號</th><th>姓名</th><th>職稱</th><th>本週 AI 行動</th><th>本月 Token</th><th>第 3、4 級</th><th>健康度</th><th></th></tr></thead>
+              <tbody>
+                <sc-for list="{{members}}" as="m" hint-placeholder-count="4">
+                  <tr><td class="mono">{{m.id}}</td><td>{{m.name}}</td><td>{{m.title}}</td><td class="mono">{{m.actions}}</td><td class="mono">{{m.tokensFmt}}</td><td class="mono">{{m.high}}</td><td class="mono">{{m.health}}</td><td><button class="btn" onClick="{{m.view}}" aria-pressed="{{m.viewing}}" style="min-height: 36px">檢視</button></td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <sc-if value="{{hasMemberDetail}}" hint-placeholder-val="{{ false }}">
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <h2 class="h2">{{memberDetail.name}}（{{memberDetail.id}}）近期 AI 行為</h2>
+            <div style="overflow-x: auto">
+              <table class="tbl">
+                <thead><tr><th>時間</th><th>風險</th><th>發起者</th><th>行為（白話）</th><th>Token</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{memberDetail.log}}" as="ml" hint-placeholder-count="3">
+                    <tr><td class="mono">{{ml.time}}</td><td><span class="chip"><span class="dot" style="background: {{ml.tierColor}}"></span>{{ml.tierShort}}</span></td><td>{{ml.originLabel}}</td><td>{{ml.action}}</td><td class="mono">{{ml.tokensFmt}}</td></tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ========== 管理員：待核准 ========== -->
+    <sc-if value="{{isApprove}}" hint-placeholder-val="{{ false }}">
+      <section class="card" style="display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-end">
+          <div>
+            <h2 class="h2">待核准的高風險 AI 行為</h2>
+            <div class="small muted" style="margin-top: 4px">第 3 級須經你核准才會執行；第 4 級已自動攔截，請檢視後處理。</div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <button class="btn" onClick="{{selectAll}}">全選待核准</button>
+            <button class="btn" onClick="{{bulkReject}}">批次退回</button>
+            <button class="btn" onClick="{{bulkApprove}}" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff">批次核准（{{selectedCount}}）</button>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <sc-for list="{{queueRows}}" as="q" hint-placeholder-count="4">
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 14px; border-radius: 12px; border: 1px solid #e2e0da; background: {{q.bg}}">
+              <div style="padding-top: 2px">
+                <sc-if value="{{q.isPending}}" hint-placeholder-val="{{ true }}">
+                  <input type="checkbox" id="{{q.cbId}}" checked="{{q.checked}}" onChange="{{q.toggle}}" aria-label="{{q.cbLabel}}" style="width: 22px; height: 22px">
+                </sc-if>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+                  <span class="chip"><span class="dot" style="background: {{q.tierColor}}"></span>{{q.tierLabel}}</span>
+                  <span class="chip"><span class="mono">{{q.emp}}</span>{{q.name}}</span>
+                  <span class="chip mono">{{q.time}}</span>
+                  <span class="chip" style="font-weight: 500">{{q.statusLabel}}</span>
+                </div>
+                <div style="font-weight: 500">{{q.action}}</div>
+                <div class="small muted">{{q.detail}}</div>
+                <sc-if value="{{q.isPending}}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                    <button class="btn" onClick="{{q.reject}}">退回</button>
+                    <button class="btn" onClick="{{q.approve}}" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff">核准</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{q.isBlocked}}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                    <button class="btn" onClick="{{q.handle}}">已檢視並輔導</button>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <!-- ========== 管理員：用量與分析 ========== -->
+    <sc-if value="{{isUsage}}" hint-placeholder-val="{{ false }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px">
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <div>
+            <h2 class="h2">各成員本月 Token</h2>
+            <div class="small muted" style="margin-top: 4px">團隊合計 812,000 / 配額 1,200,000</div>
+          </div>
+          <sc-for list="{{memberTokenBars}}" as="b" hint-placeholder-count="4">
+            <div title="{{b.tip}}" style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 80px; gap: 10px; align-items: center">
+              <div class="small">{{b.label}}</div>
+              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+              <div class="small mono" style="text-align: right">{{b.value}}</div>
+            </div>
+          </sc-for>
+        </section>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="h2">依工具分的 Token</h2>
+          <sc-for list="{{toolTokenBars}}" as="b" hint-placeholder-count="5">
+            <div title="{{b.tip}}" style="display: grid; grid-template-columns: 140px minmax(0, 1fr) 80px; gap: 10px; align-items: center">
+              <div class="small">{{b.label}}</div>
+              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+              <div class="small mono" style="text-align: right">{{b.value}}</div>
+            </div>
+          </sc-for>
+        </section>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="h2">團隊本週風險分布</h2>
+          <sc-for list="{{teamTierBars}}" as="b" hint-placeholder-count="4">
+            <div title="{{b.tip}}" style="display: grid; grid-template-columns: 140px minmax(0, 1fr) 48px; gap: 10px; align-items: center">
+              <div class="small" style="display: flex; align-items: center; gap: 6px"><span class="dot" style="background: {{b.color}}"></span>{{b.label}}</div>
+              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+              <div class="small mono" style="text-align: right">{{b.value}}</div>
+            </div>
+          </sc-for>
+        </section>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="h2">需求雷達：值得自動化的工作</h2>
+          <div class="small muted">從團隊實際使用反推高頻場景，可提交數位幕僚評估</div>
+          <sc-for list="{{radar}}" as="rd" hint-placeholder-count="3">
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 10px; background: #f6f5f1">
+              <div><div style="font-weight: 500">{{rd.task}}</div><div class="small muted">{{rd.dept}}</div></div>
+              <div class="mono" style="font-weight: 500">{{rd.count}}</div>
+            </div>
+          </sc-for>
+        </section>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <h2 class="h2">Token 異常偵測</h2>
+          <div class="small muted">用途為成本管理與異常偵測，不作為績效考核依據</div>
+          <sc-for list="{{anomalies}}" as="an" hint-placeholder-count="2">
+            <div style="display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; padding: 12px 14px; border-radius: 10px; background: #f6f5f1">
+              <span class="dot" style="background: {{an.color}}; margin-top: 6px"></span>
+              <div><div style="font-weight: 500">{{an.title}}</div><div class="small muted">{{an.detail}}</div></div>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- ========== 管理員：風險與稽核 ========== -->
+    <sc-if value="{{isAudit}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <section class="card" style="display: flex; flex-direction: column; gap: 14px">
+          <div>
+            <h2 class="h2">全行部門 AI 風險熱力圖（本週次數，僅彙總）</h2>
+            <div class="muted small" style="margin-top: 4px">顏色深淺依同一欄內的相對高低；滑鼠移上可看明細</div>
+          </div>
+          <div style="overflow-x: auto">
+            <div style="display: grid; grid-template-columns: 120px repeat(5, minmax(96px, 1fr)); gap: 2px; min-width: 640px">
+              <div></div>
+              <sc-for list="{{hmCols}}" as="c" hint-placeholder-count="5"><div class="small muted" style="padding: 6px 4px; text-align: center">{{c}}</div></sc-for>
+              <sc-for list="{{hmRows}}" as="row" hint-placeholder-count="6">
+                <div class="small" style="display: flex; align-items: center; padding-right: 8px; font-weight: 500">{{row.name}}</div>
+                <sc-for list="{{row.cells}}" as="cell" hint-placeholder-count="5">
+                  <div title="{{cell.tip}}" class="mono" style="height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: {{cell.bg}}; color: {{cell.fg}}; font-size: 14px">{{cell.v}}</div>
+                </sc-for>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px" class="small muted">
+            <span>欄內相對較低</span>
+            <sc-for list="{{hmLegend}}" as="lg" hint-placeholder-count="5"><span style="width: 28px; height: 12px; border-radius: 2px; background: {{lg}}; display: inline-block"></span></sc-for>
+            <span>較高</span>
+          </div>
+        </section>
+        <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+            <h2 class="h2">對照《金融業運用 AI 指引》</h2>
+            <button class="btn" onClick="{{exportReport}}">產生稽核報告</button>
+          </div>
+          <sc-if value="{{exported}}" hint-placeholder-val="{{ false }}"><div class="small" style="padding: 10px 14px; border-radius: 10px; background: #e9f6e9">已產生本季稽核報告（示意），內含六章對照、風險分級統計與帳本雜湊摘要。</div></sc-if>
+          <sc-for list="{{audit}}" as="a" hint-placeholder-count="6">
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid #eeece6">
+              <div><div style="font-weight: 500">{{a.chapter}}</div><div class="small muted">{{a.evidence}}</div></div>
+              <span class="chip"><span class="dot" style="background: {{a.color}}"></span>{{a.status}}</span>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- ========== 管理員：Skill 上架審核 ========== -->
+    <sc-if value="{{isSkillAdmin}}" hint-placeholder-val="{{ false }}">
+      <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+        <div>
+          <h2 class="h2">Skill 上架審核</h2>
+          <div class="small muted" style="margin-top: 4px">每個 Skill 依序通過 AI 程式審查、權限檢驗、資安檢驗（不得連外網），最後才由你人工審核開放範圍與業務必要性。</div>
+        </div>
+        <sc-for list="{{skillQueue}}" as="sq" hint-placeholder-count="2">
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px; border-radius: 12px; border: 1px solid #e2e0da">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="font-weight: 500">{{sq.name}}</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                <span class="chip">{{sq.author}}</span>
+                <span class="chip">{{sq.scopeLabel}}</span>
+                <span class="chip"><span class="dot" style="background: {{sq.tierColor}}"></span>{{sq.tierShort}}</span>
+              </div>
+              <div class="small"><span class="muted">權限聲明：</span>{{sq.perm}}</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                <sc-for list="{{sq.checks}}" as="ck" hint-placeholder-count="4"><span class="chip"><span class="dot" style="background: {{ck.color}}"></span>{{ck.label}}：{{ck.state}}</span></sc-for>
+              </div>
+            </div>
+            <sc-if value="{{sq.isPending}}" hint-placeholder-val="{{ true }}"><button class="btn" onClick="{{sq.approve}}" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff">核准上架</button></sc-if>
+            <sc-if value="{{sq.isDone}}" hint-placeholder-val="{{ false }}"><span class="chip" style="font-weight: 500">{{sq.doneLabel}}</span></sc-if>
+          </div>
+        </sc-for>
+      </section>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ===================== 浮動精靈 ===================== -->
+  <div style="position: fixed; right: 20px; bottom: 20px; z-index: 50; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; max-width: calc(100vw - 40px)">
+    <sc-if value="{{hasMoment}}" hint-placeholder-val="{{ false }}">
+      <div role="dialog" aria-label="{{mc.title}}" style="width: 340px; max-width: 100%; box-sizing: border-box; background: #fcfcfb; border: 1px solid #d8d6cf; border-top: 4px solid {{mc.color}}; border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(11, 11, 11, 0.12); display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <span class="chip" style="font-weight: 500"><span class="dot" style="background: {{mc.color}}"></span>{{mc.tag}}</span>
+          <button onClick="{{closeMoment}}" aria-label="關閉" style="width: 44px; height: 44px; border: none; background: transparent; cursor: pointer; font: inherit; font-size: 20px; color: #52514e">×</button>
+        </div>
+        <div style="font-weight: 700; font-size: 16px">{{mc.title}}</div>
+        <div class="small" style="line-height: 1.7">{{mc.body}}</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{mc.actions}}" as="ac" hint-placeholder-count="2"><button class="btn" onClick="{{ac.run}}" style="background: {{ac.bg}}; color: {{ac.fg}}; border-color: {{ac.bd}}">{{ac.label}}</button></sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{showMini}}" hint-placeholder-val="{{ false }}">
+      <div role="dialog" aria-label="永豐AI精靈狀態" style="width: 300px; max-width: 100%; box-sizing: border-box; background: #fcfcfb; border: 1px solid #d8d6cf; border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(11, 11, 11, 0.12); display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 700">永豐AI精靈</div>
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; font-size: 14px">
+          <sc-for list="{{miniRows}}" as="mr" hint-placeholder-count="3"><span class="muted">{{mr.k}}</span><span class="mono">{{mr.v}}</span></sc-for>
+        </div>
+        <sc-if value="{{hasLastEvent}}" hint-placeholder-val="{{ false }}"><div class="small" style="padding: 8px 10px; border-radius: 8px; background: #f0efec">最近：{{lastEvent}}</div></sc-if>
+        <button class="btn" onClick="{{miniAction}}" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff">{{miniActionLabel}}</button>
+      </div>
+    </sc-if>
+    <button onClick="{{toggleSprite}}" aria-label="永豐AI精靈" aria-expanded="{{spriteExpanded}}" style="position: relative; width: 60px; height: 60px; border-radius: 50%; border: none; background: {{accent}}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(11, 11, 11, 0.2)">
+      <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
+      <span aria-hidden="true" style="position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: {{spriteColor}}; border: 3px solid #fcfcfb"></span>
+    </button>
+  </div>
+
+</div>
+</sc-if>
+</script>
+<script>
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(o) {
+    this.state = Object.assign({}, this.state, o);
+    if (!this._queued) { this._queued = true; queueMicrotask(() => { this._queued = false; this._render(); }); }
+  }
+}
+
+const DC = (() => {
+  function parseAttrs(s) {
+    const out = {};
+    s.replace(/([\w-]+)="([^"]*)"/g, (_, k, v) => { out[k] = v.replace(/^\{\{\s*|\s*\}\}$/g, ''); });
+    return out;
+  }
+  function parse(src) {
+    const root = { type: 'root', children: [] }, stack = [root];
+    const re = /<sc-(if|for)\b([^>]*)>|<\/sc-(if|for)>/g;
+    let last = 0, m;
+    while ((m = re.exec(src))) {
+      const top = stack[stack.length - 1];
+      if (m.index > last) top.children.push({ type: 'text', text: src.slice(last, m.index) });
+      if (m[1]) { const n = { type: m[1], attrs: parseAttrs(m[2]), children: [] }; top.children.push(n); stack.push(n); }
+      else stack.pop();
+      last = re.lastIndex;
+    }
+    if (last < src.length) root.children.push({ type: 'text', text: src.slice(last) });
+    return root;
+  }
+  function lookup(path, scope) {
+    return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), scope);
+  }
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function renderText(t, scope, handlers) {
+    t = t.replace(/\son(Click|Change)="\{\{\s*([\w.]+)\s*\}\}"/g, (_, ev, p) => {
+      handlers.push(lookup(p, scope));
+      return ' data-on-' + ev.toLowerCase() + '="' + (handlers.length - 1) + '"';
+    });
+    t = t.replace(/\schecked="\{\{\s*([\w.]+)\s*\}\}"/g, (_, p) => (lookup(p, scope) ? ' checked' : ''));
+    return t.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, p) => esc(lookup(p, scope)));
+  }
+  function render(node, scope, handlers) {
+    if (node.type === 'text') return renderText(node.text, scope, handlers);
+    const kids = (sc) => node.children.map((c) => render(c, sc, handlers)).join('');
+    if (node.type === 'if') return lookup(node.attrs.value, scope) ? kids(scope) : '';
+    if (node.type === 'for') {
+      const list = lookup(node.attrs.list, scope) || [];
+      return list.map((item) => { const sc = Object.create(scope); sc[node.attrs.as] = item; return kids(sc); }).join('');
+    }
+    return kids(scope);
+  }
+  function mount(Cls) {
+    const app = document.getElementById('app');
+    const tpl = parse(document.getElementById('tpl').textContent);
+    const inst = new Cls({});
+    let handlers = [];
+    inst._render = () => {
+      handlers = [];
+      let html = render(tpl, inst.renderVals(), handlers);
+      // textarea 的 value 要放在內容裡
+      html = html.replace(/<textarea([^>]*?)\svalue="([^"]*)"([^>]*)><\/textarea>/g, '<textarea$1$3>$2</textarea>');
+      const a = document.activeElement, id = a && a.id;
+      const sel = id && 'selectionStart' in a ? [a.selectionStart, a.selectionEnd] : null;
+      app.innerHTML = html;
+      if (id) {
+        const el = document.getElementById(id);
+        if (el) { el.focus({ preventScroll: true }); if (sel) try { el.setSelectionRange(sel[0], sel[1]); } catch (e) {} }
+      }
+    };
+    const fire = (el, attr, e) => { const h = handlers[+el.getAttribute(attr)]; if (typeof h === 'function') h(e); };
+    app.addEventListener('click', (e) => { const el = e.target.closest('[data-on-click]'); if (el) fire(el, 'data-on-click', e); });
+    app.addEventListener('input', (e) => { const el = e.target; if (el.type !== 'checkbox' && el.hasAttribute('data-on-change')) fire(el, 'data-on-change', e); });
+    app.addEventListener('change', (e) => { const el = e.target; if (el.type === 'checkbox' && el.hasAttribute('data-on-change')) fire(el, 'data-on-change', e); });
+    inst._render();
+    window.__dc = inst;
+  }
+  return { mount };
+})();
+</script>
+<script>
+var ACCOUNTS = {
+  S12345: { id: "S12345", name: "陳怡君", title: "作業中心專員", dept: "作業中心", team: "帳戶監管組", isAdmin: false, desc: "一般使用者（作業中心專員）" },
+  M20001: { id: "M20001", name: "王建中", title: "作業中心經理", dept: "作業中心", team: "帳戶監管組", isAdmin: true, desc: "具管理權限（可切換身分）" }
+};
+
+var TIERS = {
+  4: { label: "第 4 級・禁止", short: "第 4 級 禁止", color: "#d03b3b", handling: "自動攔截，精靈立即通知本人與主管", example: "把未遮罩的身分證字號、帳號貼到外部公開 AI；用未上架的 Skill 存取客戶資料", mine: 0, team: 1 },
+  3: { label: "第 3 級・高風險", short: "第 3 級 高風險", color: "#ec835a", handling: "精靈跳出通知，須經主管核准才會執行", example: "AI 寫入核心系統、對客戶寄送通知、影響客戶權益的判斷", mine: 1, team: 7 },
+  2: { label: "第 2 級・有限風險", short: "第 2 級 有限", color: "#fab219", handling: "不跳出，精靈小點轉黃；產出須標示 AI 生成", example: "處理已遮罩的機密資料、AI 產出將提供他人使用", mine: 9, team: 31 },
+  1: { label: "第 1 級・低風險", short: "第 1 級 低", color: "#0ca30c", handling: "只記錄，不打擾", example: "翻譯、摘要公開或一般內部資料", mine: 14, team: 58 }
+};
+
+var SAMPLE = "請幫我整理以下客戶資料，並草擬一份貸款審核摘要：\n客戶王小明先生，身分證字號 A123456789，手機 0912-345-678，\n住址臺北市大安區和平東路一段100號，薪轉帳號 807-1234-5678901，\n信用卡 4563-1234-5678-9012，Email wang.xm@example.com。\n年收入約 120 萬元，申貸 300 萬元購屋。";
+
+var RULES = [
+  { type: "id", label: "身分證字號", re: /[A-Z][12]\d{8}/g },
+  { type: "card", label: "信用卡號", re: /\d{4}[- ]\d{4}[- ]\d{4}[- ]\d{4}/g },
+  { type: "acct", label: "銀行帳號", re: /\d{3}-\d{2,4}-\d{6,8}/g },
+  { type: "phone", label: "手機號碼", re: /09\d{2}-?\d{3}-?\d{3}/g },
+  { type: "email", label: "電子郵件", re: /[\w.+-]+@[\w-]+\.[\w.-]*\w/g },
+  { type: "addr", label: "地址", re: /(臺北市|台北市|新北市|桃園市|臺中市|台中市|臺南市|台南市|高雄市)[一-龥]{1,3}區[一-龥\d]{1,20}?號/g },
+  { type: "name", label: "姓名", re: /(王|李|張|陳|林|黃|吳|劉|蔡|楊|許|鄭|謝|洪|郭|曾|周|葉|蘇|賴|徐)[一-龥]{1,2}(?=先生|小姐|女士)/g }
+];
+
+var LEDGER = [
+  { id: "#01", time: "10/19 09:12", tool: "行內 GAI 助理", task: "翻譯英文函件", masked: 0, out: "僅本人檢視", origin: "human", parent: "", tier: 1, tokens: 1820 },
+  { id: "#02", time: "10/19 10:05", tool: "Skill：客戶來函摘要", task: "客戶來函摘要", masked: 4, out: "僅本人檢視", origin: "human", parent: "", tier: 2, tokens: 3410 },
+  { id: "#03", time: "10/19 11:40", tool: "家事宣告 Agent", task: "啟動名單查找", masked: 0, out: "下載司法院公告", origin: "human", parent: "", tier: 1, tokens: 640 },
+  { id: "#04", time: "10/19 11:41", tool: "家事宣告 Agent", task: "查詢客戶資料庫 41 次", masked: 41, out: "比對結果（行內）", origin: "ai", parent: "#03", tier: 2, tokens: 12880 },
+  { id: "#05", time: "10/19 11:42", tool: "家事宣告 Agent", task: "追加查詢 2 位同名客戶的出生日期", masked: 2, out: "比對結果（行內）", origin: "ai", parent: "#03", tier: 2, tokens: 1150 },
+  { id: "#06", time: "10/19 11:44", tool: "家事宣告 Agent", task: "更新 3 個帳戶為受監護狀態", masked: 3, out: "送主管核准", origin: "aiApproved", parent: "#03", tier: 3, tokens: 2300 },
+  { id: "#07", time: "10/19 14:32", tool: "行內 GAI 助理", task: "客戶來函回覆草稿", masked: 8, out: "下載 PDF（已加浮水印）", origin: "human", parent: "", tier: 2, tokens: 4960 }
+];
+
+var ORIGIN = {
+  human: { label: "人工發起", bg: "#f0efec", fg: "#0b0b0b" },
+  ai: { label: "AI 代理發起", bg: "#e8f1fc", fg: "#104281" },
+  aiApproved: { label: "AI 提出・人工核准", bg: "#fff4d6", fg: "#6b4a00" }
+};
+
+var MEMBERS = [
+  { id: "S12345", name: "陳怡君", title: "專員", actions: 24, tokens: 182400, high: 1, health: 92 },
+  { id: "S12346", name: "李志豪", title: "專員", actions: 31, tokens: 246900, high: 2, health: 85 },
+  { id: "S12347", name: "張雅婷", title: "資深專員", actions: 18, tokens: 131500, high: 1, health: 90 },
+  { id: "S12348", name: "黃冠宇", title: "專員", actions: 27, tokens: 251200, high: 3, health: 71 }
+];
+
+var MEMBER_LOG = {
+  S12345: [
+    { time: "10/19 11:44", tier: 3, origin: "aiApproved", action: "家事宣告 Agent 提出更新 3 個帳戶為受監護狀態", tokens: 2300 },
+    { time: "10/19 11:41", tier: 2, origin: "ai", action: "家事宣告 Agent 查詢客戶資料庫 41 次", tokens: 12880 },
+    { time: "10/19 10:05", tier: 2, origin: "human", action: "以 Skill 摘要客戶來函（已遮罩 4 筆個資）", tokens: 3410 }
+  ],
+  S12346: [
+    { time: "10/19 14:48", tier: 3, origin: "aiApproved", action: "Agent 提出調升 2 位客戶的帳戶警示等級", tokens: 3900 },
+    { time: "10/19 13:05", tier: 3, origin: "aiApproved", action: "催收通知 Agent 準備寄出 12 封逾期繳款通知", tokens: 8800 },
+    { time: "10/19 09:30", tier: 1, origin: "human", action: "翻譯外部函件", tokens: 1500 }
+  ],
+  S12347: [
+    { time: "10/19 14:10", tier: 3, origin: "aiApproved", action: "RPA 準備批次更新 40 筆客戶通訊地址", tokens: 5200 },
+    { time: "10/19 10:20", tier: 2, origin: "human", action: "撰寫內部作業說明（含已遮罩個資）", tokens: 2700 }
+  ],
+  S12348: [
+    { time: "10/19 15:22", tier: 4, origin: "human", action: "將未遮罩的客戶名單貼到外部公開 AI 服務，已自動攔截", tokens: 0 },
+    { time: "10/19 11:15", tier: 2, origin: "human", action: "摘要客戶來函（已遮罩 6 筆個資）", tokens: 4100 },
+    { time: "10/18 16:40", tier: 3, origin: "aiApproved", action: "Agent 提出修改客戶聯絡電話，已由主管退回", tokens: 1900 }
+  ]
+};
+
+var QUEUE0 = [
+  { id: "Q1", emp: "S12345", name: "陳怡君", action: "家事宣告 Agent：更新 3 個帳戶為受監護狀態", detail: "比對依據：姓名與出生日期皆相符；另 2 筆同名者已排除。執行後將限制客戶交易權限。", tier: 3, time: "10/19 11:44", status: "pending" },
+  { id: "Q2", emp: "S12346", name: "李志豪", action: "催收通知 Agent：寄送 12 封逾期繳款通知給客戶", detail: "收件人與金額由 AI 從帳務系統擷取，信件內容為 AI 生成。", tier: 3, time: "10/19 13:05", status: "pending" },
+  { id: "Q3", emp: "S12347", name: "張雅婷", action: "RPA：批次更新 40 筆客戶通訊地址", detail: "地址來源為客戶線上申請表，AI 已比對格式，3 筆地址不完整。", tier: 3, time: "10/19 14:10", status: "pending" },
+  { id: "Q4", emp: "S12346", name: "李志豪", action: "Agent：調升 2 位客戶的帳戶警示等級", detail: "依近 7 日交易樣態判斷疑似人頭帳戶，僅供參考，需人工複核。", tier: 3, time: "10/19 14:48", status: "pending" },
+  { id: "Q5", emp: "S12348", name: "黃冠宇", action: "將未遮罩的客戶名單貼到外部公開 AI 服務", detail: "含身分證字號 12 筆、帳號 12 筆，精靈已阻擋送出。", tier: 4, time: "10/19 15:22", status: "blocked" }
+];
+
+var SKILLS = [
+  { id: "k1", name: "客戶來函摘要", desc: "把客戶來函整理成三點摘要與建議回覆方向，自動遮罩個資。", author: "S20518・客服中心", dept: "客服中心", team: "來函組", scope: "all", tier: 2, downloads: 1284 },
+  { id: "k2", name: "英文函件翻譯", desc: "內建法務用語對照表，譯文自動標示 AI 生成。", author: "S31022・法人金融", dept: "法人金融", team: "外匯組", scope: "all", tier: 1, downloads: 2031 },
+  { id: "k3", name: "家事公告欄位擷取", desc: "從司法院家事公告擷取姓名、出生日期與宣告類型。", author: "S12347・作業中心", dept: "作業中心", team: "帳戶監管組", scope: "dept", tier: 2, downloads: 214 },
+  { id: "k4", name: "異常帳戶初篩", desc: "依交易樣態標出疑似警示帳戶，僅供人工複核參考。", author: "S12346・帳戶監管組", dept: "作業中心", team: "帳戶監管組", scope: "team", tier: 3, downloads: 37 },
+  { id: "k5", name: "會議紀錄摘要", desc: "把會議逐字稿轉成決議與待辦，可指定負責人。", author: "S40877・數位幕僚", dept: "數位幕僚", team: "幕僚組", scope: "all", tier: 1, downloads: 3512 },
+  { id: "k6", name: "徵信資料彙整", desc: "彙整財報與信用資料，產出徵信摘要初稿。", author: "S50231・授信審查部", dept: "授信審查部", team: "企金組", scope: "dept", tier: 3, downloads: 402 },
+  { id: "k7", name: "企金授信範本", desc: "企金組內部授信報告範本與用語檢查。", author: "S50112・授信審查部", dept: "授信審查部", team: "企金組", scope: "team", tier: 2, downloads: 58 }
+];
+var SCOPE = {
+  team: { label: "限小組", bg: "#efe8fb", fg: "#4b2a85" },
+  dept: { label: "限本部門", bg: "#e6f4ef", fg: "#1d5a43" },
+  all: { label: "不限部門", bg: "#e8f1fc", fg: "#104281" }
+};
+
+var DEPTS = [["個人金融", [128, 12, 6, 3, 5]], ["法人金融", [64, 31, 18, 7, 2]], ["授信審查", [210, 58, 44, 15, 9]], ["財富管理", [96, 8, 22, 4, 11]], ["客服中心", [342, 5, 2, 1, 3]], ["作業中心", [155, 40, 9, 6, 1]]];
+var SEQ = ["#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"];
+
+function fnv(str) {
+  var x = 2166136261;
+  for (var i = 0; i < str.length; i++) { x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); }
+  return ("00000000" + (x >>> 0).toString(16)).slice(-8);
+}
+function fmt(n) { return Number(n).toLocaleString("en-US"); }
+function bars(rows, unit) {
+  var max = Math.max.apply(null, rows.map(function (r) { return r[1]; })) || 1;
+  return rows.map(function (r) { return { label: r[0], value: fmt(r[1]), pct: Math.round(r[1] / max * 100) + "%", tip: r[0] + "：" + fmt(r[1]) + (unit || ""), color: r[2] || "" }; });
+}
+
+class Component extends DCLogic {
+  state = {
+    screen: "login", empInput: "", loginErr: false, meId: null, mode: "user", tab: "overview", hideDash: false,
+    input: SAMPLE, restored: false, wm: "visible", traced: false, verified: false, exported: false, originFilter: "all",
+    queue: QUEUE0.map(function (q) { return Object.assign({}, q); }), selected: {},
+    viewMember: null, scopeFilter: "any", installed: { k1: true }, publishScope: "dept", published: false,
+    skillApproved: {}, moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "", lastEvent: ""
+  };
+
+  deid(text) {
+    var hits = [];
+    RULES.forEach(function (r) {
+      r.re.lastIndex = 0;
+      var m;
+      while ((m = r.re.exec(text)) !== null) {
+        hits.push({ start: m.index, end: m.index + m[0].length, type: r.type, label: r.label, value: m[0] });
+        if (m[0].length === 0) r.re.lastIndex++;
+      }
+    });
+    hits.sort(function (a, b) { return a.start - b.start || b.end - a.end; });
+    var kept = [], last = 0;
+    hits.forEach(function (h) { if (h.start >= last) { kept.push(h); last = h.end; } });
+    var counters = {}, byVal = {}, firstTok = {}, tokenMap = {}, counts = {};
+    kept.forEach(function (h) {
+      var key = h.type + "|" + h.value;
+      if (!byVal[key]) { counters[h.type] = (counters[h.type] || 0) + 1; byVal[key] = "【" + h.label + counters[h.type] + "】"; }
+      h.token = byVal[key]; tokenMap[h.token] = h.value; counts[h.type] = (counts[h.type] || 0) + 1;
+      if (!firstTok[h.type]) firstTok[h.type] = h.token;
+    });
+    var orig = [], masked = [], pos = 0;
+    kept.forEach(function (h) {
+      if (h.start > pos) { var t = text.slice(pos, h.start); orig.push({ text: t, hit: false, plain: true, tip: "" }); masked.push({ text: t, hit: false, plain: true, tip: "" }); }
+      orig.push({ text: h.value, hit: true, plain: false, tip: h.label });
+      masked.push({ text: h.token, hit: true, plain: false, tip: h.label });
+      pos = h.end;
+    });
+    if (pos < text.length) { var rest = text.slice(pos); orig.push({ text: rest, hit: false, plain: true, tip: "" }); masked.push({ text: rest, hit: false, plain: true, tip: "" }); }
+    return { kept: kept, orig: orig, masked: masked, firstTok: firstTok, tokenMap: tokenMap, counts: counts };
+  }
+
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var accent = this.props.accent ?? "#256abf";
+    var me = ACCOUNTS[s.meId] || { id: "", name: "", title: "", dept: "", team: "", isAdmin: false };
+    var isApp = s.screen === "app";
+    var userMode = s.mode === "user";
+    var adminMode = s.mode === "admin" && me.isAdmin;
+    function set(o) { self.setState(o); }
+
+    // ---------- login ----------
+    var demoAccounts = Object.keys(ACCOUNTS).map(function (k) { var a = ACCOUNTS[k]; return { id: a.id, desc: a.desc, fill: function () { set({ empInput: a.id, loginErr: false }); } }; });
+    function doLogin() {
+      var id = (s.empInput || "").trim().toUpperCase();
+      if (ACCOUNTS[id]) set({ screen: "app", meId: id, mode: "user", tab: "overview", loginErr: false, hideDash: false, moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "", lastEvent: "" });
+      else set({ loginErr: true });
+    }
+
+    // ---------- tabs ----------
+    var tabDef = adminMode
+      ? [["team", "團隊總覽"], ["approve", "待核准"], ["usage", "用量與分析"], ["audit", "風險與稽核"], ["skilladmin", "Skill 上架審核"]]
+      : [["overview", "總覽"], ["deid", "去識別化"], ["agent", "Agent 行為翻譯"], ["ledger", "浮水印與帳本"], ["market", "Skill 市場"]];
+    var tabs = tabDef.map(function (d) {
+      var on = d[0] === s.tab;
+      var label = d[1];
+      return { label: label, pressed: on ? "true" : "false", bg: on ? accent : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", bd: on ? accent : "#c9c7bf", pick: function () { set({ tab: d[0] }); } };
+    });
+
+    // ---------- queue ----------
+    var q1 = s.queue.filter(function (q) { return q.id === "Q1"; })[0];
+    var pendingAll = s.queue.filter(function (q) { return q.status === "pending"; }).length;
+    var blockedAll = s.queue.filter(function (q) { return q.status === "blocked"; }).length;
+    var pendingMine = q1 && q1.status === "pending" ? 1 : 0;
+    var statusLabel = { pending: "待核准", approved: "已核准", rejected: "已退回", blocked: "已攔截，待檢視", handled: "已檢視並輔導" };
+    function setStatus(ids, st) {
+      var q = s.queue.map(function (x) { var y = Object.assign({}, x); if (ids.indexOf(x.id) >= 0 && x.status === "pending") y.status = st; return y; });
+      var sel = Object.assign({}, s.selected); ids.forEach(function (i) { delete sel[i]; });
+      set({ queue: q, selected: sel });
+    }
+    var queueRows = s.queue.map(function (q) {
+      var t = TIERS[q.tier];
+      return {
+        emp: q.emp, name: q.name, action: q.action, detail: q.detail, time: q.time,
+        tierLabel: t.label, tierColor: t.color, statusLabel: statusLabel[q.status],
+        isPending: q.status === "pending", isBlocked: q.status === "blocked",
+        bg: q.status === "pending" || q.status === "blocked" ? "#fcfcfb" : "#f6f5f1",
+        cbId: "cb-" + q.id, cbLabel: "選取：" + q.action, checked: !!s.selected[q.id],
+        toggle: function () { var sel = Object.assign({}, s.selected); if (sel[q.id]) delete sel[q.id]; else sel[q.id] = true; set({ selected: sel }); },
+        approve: function () { setStatus([q.id], "approved"); },
+        reject: function () { setStatus([q.id], "rejected"); },
+        handle: function () { set({ queue: s.queue.map(function (x) { var y = Object.assign({}, x); if (x.id === q.id) y.status = "handled"; return y; }) }); }
+      };
+    });
+    var selectedIds = Object.keys(s.selected).filter(function (k) { var q = s.queue.filter(function (x) { return x.id === k; })[0]; return q && q.status === "pending"; });
+
+    // ---------- user overview ----------
+    var userKpis = [
+      { label: "今日 AI 行動", value: "7 筆", note: "其中 2 筆由 AI 代理發起" },
+      { label: "本月 Token", value: "182,400", note: "配額 300,000，已用 61%" },
+      { label: "待主管核准", value: pendingMine + " 筆", note: pendingMine ? "第 3 級動作已暫停，等待主管王建中" : "目前沒有等待中的動作" },
+      { label: "本週禁止級攔截", value: "0 次", note: "AI 使用健康度 92 分" }
+    ];
+    var myTokenBars = bars([["行內 GAI 助理", 96200], ["家事宣告 Agent", 58900], ["Skill：客戶來函摘要", 18300], ["Skill：英文函件翻譯", 9000]], " tokens");
+    var tierRows = [4, 3, 2, 1].map(function (n) { var t = TIERS[n]; return { label: t.label, color: t.color, handling: t.handling, example: t.example, mine: t.mine }; });
+
+    // ---------- ledger ----------
+    var prev = "00000000";
+    var ledger = LEDGER.map(function (r) {
+      var h = fnv(prev + r.id + r.time + r.tool + r.task + r.masked + r.out + r.origin + r.parent + r.tier + r.tokens);
+      var o = ORIGIN[r.origin], t = TIERS[r.tier];
+      var row = { id: r.id, time: r.time, tool: r.tool, task: r.task, out: r.out, hash: h, origin: r.origin,
+        originLabel: o.label, originBg: o.bg, originFg: o.fg, tierShort: t.short, tierColor: t.color, tokensFmt: fmt(r.tokens),
+        principal: r.origin === "human" ? me.id + " 本人" : me.id + "（AI 代理執行）",
+        approver: r.tier >= 3 ? ({ pending: "待 M20001 核准", approved: "M20001 王建中", rejected: "M20001 退回" }[q1 ? q1.status : "pending"] || "待核准") : "不需核准",
+        parent: r.parent ? "源自 " + r.parent : "無" };
+      prev = h;
+      return row;
+    });
+    var recent = ledger.slice(-4).reverse();
+    var of = s.originFilter;
+    var ledgerShown = ledger.filter(function (r) { return of === "all" || r.origin === of; });
+    var originStats = ["human", "ai", "aiApproved"].map(function (k) { return { label: ORIGIN[k].label, bg: ORIGIN[k].bg, fg: ORIGIN[k].fg, count: ledger.filter(function (r) { return r.origin === k; }).length }; });
+    var originFilters = [["all", "全部"], ["human", "人工發起"], ["ai", "AI 代理發起"], ["aiApproved", "AI 提出・人工核准"]].map(function (f) {
+      var on = f[0] === of;
+      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#0b0b0b" : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", pick: function () { set({ originFilter: f[0] }); } };
+    });
+    var wmText = me.id + " · 2026/10/19 14:32 · 機密 · 僅限內部使用 · " + me.id + " · 2026/10/19 14:32 · 機密 · 僅限內部使用";
+    var wmRows = []; for (var i = 0; i < 10; i++) wmRows.push(wmText);
+    var isVis = s.wm === "visible";
+    var signoff = [
+      { role: "產出者：AI（行內 GAI 助理）", detail: "模型版本與提示版本已記錄於帳本", color: "#86b6ef" },
+      { role: "審閱者：" + me.id + "（你）", detail: "已核對 3 處內容，2026/10/19 14:30 簽核", color: "#0ca30c" },
+      { role: "核准者：作業中心經理 王建中", detail: "對外寄送前需核准", color: "#fab219" }
+    ];
+
+    // ---------- deid ----------
+    var d = this.deid(s.input || "");
+    var piiChips = RULES.filter(function (r) { return d.counts[r.type]; }).map(function (r) { return { label: r.label, count: d.counts[r.type] }; });
+    var ft = d.firstTok;
+    var reply = "貸款審核摘要（草稿）\n申貸人：" + (ft.name || "（未提供）") + "\n聯絡方式：" + (ft.phone || "（未提供）") + "、" + (ft.email || "（未提供）") + "\n撥款帳戶：" + (ft.acct || "（未提供）") + "\n初步意見：請補附財力證明與擔保品估價資料後送授信審查。";
+    var replySegs = reply.split(/(【[^】]+】)/).filter(function (p) { return p.length > 0; }).map(function (p) {
+      var isTok = /^【[^】]+】$/.test(p) && d.tokenMap[p];
+      if (!isTok) return { text: p, hit: false, plain: true, cls: "" };
+      return { text: s.restored ? d.tokenMap[p] : p, hit: true, plain: false, cls: s.restored ? "pii" : "tok" };
+    });
+    var hasCrit = d.counts.id || d.counts.card || d.counts.acct;
+    var level;
+    if (hasCrit) level = { label: "第 2 級・有限風險（已遮罩）", color: TIERS[2].color, reason: "含身分證字號、帳號或卡號。遮罩後交給行內模型屬第 2 級；若未遮罩送往外部 AI，即為第 4 級並會被攔截。", routes: [
+      { verdict: "可使用", tool: "行內 GAI 助理（已遮罩版本）", color: "#0ca30c" }, { verdict: "需主管核准", tool: "Agent 自動寄送或寫入系統（第 3 級）", color: "#ec835a" }, { verdict: "禁止", tool: "外部公開 AI 服務、個人帳號（第 4 級）", color: "#d03b3b" }] };
+    else if (d.kept.length) level = { label: "第 2 級・有限風險", color: TIERS[2].color, reason: "含姓名、電話、地址等一般個資。遮罩後可在行內工具使用。", routes: [
+      { verdict: "可使用", tool: "行內 GAI 助理（已遮罩版本）", color: "#0ca30c" }, { verdict: "禁止", tool: "外部公開 AI 服務、個人帳號（第 4 級）", color: "#d03b3b" }] };
+    else level = { label: "第 1 級・低風險", color: TIERS[1].color, reason: "未偵測到個人資料。仍請留意是否涉及未公開的業務資訊。", routes: [
+      { verdict: "可使用", tool: "行內 GAI 助理", color: "#0ca30c" }, { verdict: "請自行判斷", tool: "外部公開 AI 服務（不得含未公開業務資訊）", color: "#fab219" }] };
+
+    // ---------- agent ----------
+    var q1s = q1 ? q1.status : "pending";
+    var stepDefs = [
+      { title: "下載司法院本週家事公告", plain: "機器人自動到司法院公告網站，把本週的監護、輔助宣告公告抓下來。只讀取公開資料，不會送出本行任何資料。", tags: ["RPA 網頁擷取", "外部資料讀取"], where: "司法院公告網站 → 行內", data: "公開資料：法院公告", tier: 1, tokens: 640 },
+      { title: "從公告擷取當事人資料", plain: "用生成式 AI 讀公告內文，整理出姓名、出生日期、宣告類型。共擷取 41 筆。", tags: ["OCR 文字辨識", "生成式 AI（LLM）", "資訊擷取"], where: "行內模型", data: "公開資料", tier: 1, tokens: 4220 },
+      { title: "比對本行客戶名單", plain: "把擷取到的名單和本行客戶逐一比對。同名同姓可能誤判，系統已標出 2 筆相似度不足、需要人工判斷。", tags: ["實體比對", "姓名相似度"], where: "行內伺服器", data: "機密：客戶身分資料", tier: 2, tokens: 12880 },
+      { title: "產生比對結果與依據", plain: "AI 為每一筆命中寫出理由（例如姓名與出生日期皆相符），讓你知道它為什麼這樣判斷。", tags: ["生成式 AI（LLM）", "可解釋輸出"], where: "行內模型", data: "機密：比對結果", tier: 2, tokens: 3150 },
+      { title: "更新 3 個帳戶為受監護狀態", plain: "AI 準備在核心系統把帳戶改成受監護或受輔助宣告狀態，這會限制客戶的交易權限。屬第 3 級，已暫停並送主管核准。", tags: ["核心系統寫入", "影響客戶權益"], where: "行內核心系統", data: "機密：帳戶狀態", tier: 3, tokens: 2300 }
+    ];
+    var gate = { pending: ["已送作業中心經理王建中核准，核准前不會執行。", "#fdeee6", "等待主管核准"], approved: ["主管已核准，3 個帳戶狀態已更新，帳本已記錄核准人 M20001。", "#e9f6e9", "已核准並更新"], rejected: ["主管已退回，帳戶狀態未變更，名單轉交人工覆核。", "#f0efec", "主管退回"] }[q1s] || ["", "#f0efec", ""];
+    var steps = stepDefs.map(function (st, i) {
+      var t = TIERS[st.tier], last = i === stepDefs.length - 1;
+      return { n: i + 1, title: st.title, plain: st.plain, tags: st.tags, where: st.where, data: st.data, tierLabel: t.label, tierColor: t.color, tokens: fmt(st.tokens),
+        status: last ? gate[2] : "已完成", border: last && q1s === "pending" ? "#ec835a" : "#e2e0da", isGate: last, gateText: gate[0], gateBg: gate[1] };
+    });
+    var flow = [["司法院公告網站", true], ["RPA 擷取", false], ["行內模型", false], ["客戶資料庫", false], ["核心系統帳戶狀態", false]].map(function (f, i, arr) {
+      return { label: f[0], bg: f[1] ? "#fde1d3" : "#f0efec", fg: f[1] ? "#7a2e0e" : "#0b0b0b", arrow: i < arr.length - 1 };
+    });
+
+    // ---------- market ----------
+    function visible(k) { return k.scope === "all" || (k.scope === "dept" && k.dept === me.dept) || (k.scope === "team" && k.team === me.team); }
+    var vis = SKILLS.filter(visible);
+    var sfKey = s.scopeFilter;
+    var skillCards = vis.filter(function (k) { return sfKey === "any" || k.scope === sfKey; }).map(function (k) {
+      var inst = !!s.installed[k.id], sc = SCOPE[k.scope], t = TIERS[k.tier];
+      return { name: k.name, desc: k.desc, author: k.author, downloads: fmt(k.downloads + (inst && k.id !== "k1" ? 1 : 0)), scopeLabel: sc.label, scopeBg: sc.bg, scopeFg: sc.fg,
+        tierShort: t.short, tierColor: t.color, installedStr: inst ? "true" : "false", btnLabel: inst ? "已安裝（點選移除）" : "安裝",
+        btnBg: inst ? "#f0efec" : accent, btnFg: inst ? "#0b0b0b" : "#ffffff", btnBd: inst ? "#c9c7bf" : accent,
+        toggle: function () { var o = Object.assign({}, s.installed); if (o[k.id]) delete o[k.id]; else o[k.id] = true; set({ installed: o }); } };
+    });
+    var scopeFilters = [["any", "全部可見"], ["team", "限小組"], ["dept", "限本部門"], ["all", "不限部門"]].map(function (f) {
+      var on = f[0] === sfKey;
+      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#0b0b0b" : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", pick: function () { set({ scopeFilter: f[0] }); } };
+    });
+    var publishScopes = [["team", "限小組（帳戶監管組）"], ["dept", "限本部門（作業中心）"], ["all", "不限部門（全行）"]].map(function (f) {
+      var on = f[0] === s.publishScope;
+      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#0b0b0b" : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", pick: function () { set({ publishScope: f[0], published: false }); } };
+    });
+    var pubApproved = !!s.skillApproved.mine;
+    var publishMsg = s.published ? (pubApproved ? "主管已核准，「受監護名單比對檢核表」已在「" + SCOPE[s.publishScope].label + "」市場上架。" : "已送出上架申請（開放範圍：" + SCOPE[s.publishScope].label + "）。AI 程式審查、權限檢驗、資安檢驗皆已通過，等待主管王建中人工審核。") : "";
+    var anomalies = [
+      { title: "黃冠宇（S12348）10/18 單日用量為平日的 4.2 倍", detail: "集中在同一個 Agent 任務，疑似迴圈重試。已通知本人與資訊單位確認。", color: TIERS[3].color },
+      { title: "團隊用量在配額內", detail: "本月已用 68%，依目前速度月底約 94%。", color: TIERS[1].color }
+    ];
+
+    // ---------- admin ----------
+    var adminKpis = [
+      { label: "直屬同仁", value: "4 人", note: "作業中心帳戶監管組" },
+      { label: "團隊本月 Token", value: "812,000", note: "配額 1,200,000，已用 68%" },
+      { label: "待你核准", value: pendingAll + " 筆", note: "第 3 級高風險動作" },
+      { label: "禁止級事件", value: blockedAll + " 筆", note: blockedAll ? "已自動攔截，待你檢視" : "本週已全部處理" }
+    ];
+    var members = MEMBERS.map(function (m) {
+      return { id: m.id, name: m.name, title: m.title, actions: m.actions, tokensFmt: fmt(m.tokens), high: m.high, health: m.health,
+        viewing: s.viewMember === m.id ? "true" : "false", view: function () { set({ viewMember: s.viewMember === m.id ? null : m.id }); } };
+    });
+    var vm = MEMBERS.filter(function (m) { return m.id === s.viewMember; })[0];
+    var memberDetail = vm ? { id: vm.id, name: vm.name, log: (MEMBER_LOG[vm.id] || []).map(function (l) { var t = TIERS[l.tier]; return { time: l.time, action: l.action, tierShort: t.short, tierColor: t.color, originLabel: ORIGIN[l.origin].label, tokensFmt: fmt(l.tokens) }; }) } : { id: "", name: "", log: [] };
+    var memberTokenBars = bars(MEMBERS.slice().sort(function (a, b) { return b.tokens - a.tokens; }).map(function (m) { return [m.name + " " + m.id, m.tokens]; }), " tokens");
+    var toolTokenBars = bars([["行內 GAI 助理", 402000], ["家事宣告 Agent", 188500], ["催收通知 Agent", 121300], ["市場 Skills", 70700], ["RPA 結合 GAI", 29500]], " tokens");
+    var teamTierBars = bars([4, 3, 2, 1].map(function (n) { return [TIERS[n].label, TIERS[n].team, TIERS[n].color]; }), " 次");
+    var radar = [
+      { task: "家事公告比對", dept: "作業中心・帳戶監管組", count: "41 次/週" },
+      { task: "客戶來函摘要與回覆", dept: "作業中心・帳戶監管組", count: "36 次/週" },
+      { task: "逾期繳款通知撰寫", dept: "作業中心・帳戶監管組", count: "22 次/週" }
+    ];
+    var hmCols = ["個資遮罩", "機密檔上傳", "外部 API", "第 3 級動作", "第 4 級攔截"];
+    var colMax = hmCols.map(function (_, c) { return Math.max.apply(null, DEPTS.map(function (dp) { return dp[1][c]; })); });
+    var hmRows = DEPTS.map(function (dp) {
+      return { name: dp[0], cells: dp[1].map(function (v, c) { var lv = Math.min(5, Math.max(1, Math.ceil(v / colMax[c] * 5))); return { v: v, bg: SEQ[lv - 1], fg: lv >= 3 ? "#ffffff" : "#0b0b0b", tip: dp[0] + " · " + hmCols[c] + "：本週 " + v + " 次" }; }) };
+    });
+    var audit = [
+      { chapter: "治理與問責", evidence: "每筆 AI 行動綁定工號、發起者（人或 AI）、審閱人與核准人", status: "符合", color: "#0ca30c" },
+      { chapter: "公平性與以人為本", evidence: "第 3 級動作 100% 經主管核准後才執行", status: "符合", color: "#0ca30c" },
+      { chapter: "隱私與客戶權益", evidence: "第 4 級事件 1 筆已攔截；敏感資料送出前自動遮罩", status: "符合", color: "#0ca30c" },
+      { chapter: "穩健與安全", evidence: "Skill 市場第 3 級以上上架須資安複核；2 份外部文件疑似指令注入待確認", status: "需追蹤", color: "#fab219" },
+      { chapter: "透明性與可解釋性", evidence: "Agent 每一步皆有白話紀錄與技術標註", status: "符合", color: "#0ca30c" },
+      { chapter: "永續發展", evidence: "本季 AI 素養微課程完成率 78%", status: "需追蹤", color: "#fab219" }
+    ];
+    var skillQueue = [{ key: "p1", name: "異常帳戶初篩 v2", author: "S12346 李志豪", scope: "team", tier: 3, perm: "存取帳戶交易明細（唯讀）；動作：標記疑似警示帳戶，不可修改帳戶" }];
+    if (s.published) skillQueue.push({ key: "mine", name: "受監護名單比對檢核表", author: "S12345 陳怡君", scope: s.publishScope, tier: 2, perm: "存取客戶姓名、出生日期（唯讀）；動作：產出比對檢核表" });
+    skillQueue = skillQueue.map(function (k) {
+      var done = !!s.skillApproved[k.key], t = TIERS[k.tier];
+      var checks = [["AI 程式審查", true], ["權限檢驗", true], ["資安檢驗（不連外網）", true], ["人工審核", done]].map(function (c) {
+        return { label: c[0], state: c[1] ? "通過" : "待你審核", color: c[1] ? "#0ca30c" : "#fab219" };
+      });
+      return { name: k.name, author: k.author, scopeLabel: SCOPE[k.scope].label, tierShort: t.short, tierColor: t.color, isPending: !done, isDone: done,
+        perm: k.perm, checks: checks, doneLabel: "已上架",
+        approve: function () { var o = Object.assign({}, s.skillApproved); o[k.key] = true; set({ skillApproved: o }); } };
+    });
+
+    // ---------- sprite ----------
+    function go(tab, extra) { var st = { tab: tab, mode: "user", moment: null, spriteOpen: false, hideDash: false }; if (extra) for (var k in extra) st[k] = extra[k]; set(st); }
+    function close() { set({ moment: null }); }
+    function act(label, run, primary) { return { label: label, run: run, bg: primary ? accent : "#fcfcfb", fg: primary ? "#ffffff" : "#0b0b0b", bd: primary ? accent : "#c9c7bf" }; }
+    var moments = {
+      t3: { tag: "第 3 級・高風險", color: TIERS[3].color, title: "已暫停，送主管核准",
+        body: "家事宣告 Agent 準備把 3 個帳戶改為受監護狀態，會限制客戶交易權限。動作已暫停，並送作業中心經理王建中核准。",
+        actions: [act("查看每一步", function () { go("agent"); }, false), act("知道了", close, true)] },
+      t4: { tag: "第 4 級・禁止", color: TIERS[4].color, title: "已攔截，未送出",
+        body: "你貼到外部公開 AI 服務的內容含未遮罩的身分證字號與帳號，已阻擋送出，並通知主管。請改用行內 GAI 助理，系統會自動遮罩。",
+        actions: [act("改用行內助理", function () { go("deid"); }, false), act("知道了", close, true)] }
+    };
+    var mc = s.moment ? moments[s.moment] : { tag: "", color: "#0ca30c", title: "", body: "", actions: [] };
+    var tierDemos = [
+      [1, "第 1 級：翻譯公開文件", function () { set({ moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "第 1 級：精靈沒有出現，只在帳本留下紀錄。", lastEvent: "第 1 級・翻譯公開文件，已記錄" }); }],
+      [2, "第 2 級：處理已遮罩的客戶來函", function () { set({ moment: null, spriteOpen: false, spriteLevel: 2, demoNote: "第 2 級：精靈不跳出，右下角小點轉黃；產出已自動標示 AI 生成。", lastEvent: "第 2 級・來函摘要（已遮罩 4 筆），產出已標示 AI 生成" }); }],
+      [3, "第 3 級：Agent 寫入核心系統", function () { set({ moment: "t3", spriteOpen: false, spriteLevel: 3, demoNote: "", lastEvent: "第 3 級・更新帳戶狀態，等待主管核准", queue: s.queue.map(function (x) { var y = Object.assign({}, x); if (x.id === "Q1") y.status = "pending"; return y; }) }); }],
+      [4, "第 4 級：個資貼到外部 AI", function () { set({ moment: "t4", spriteOpen: false, spriteLevel: 4, demoNote: "", lastEvent: "第 4 級・外部 AI 貼上已攔截" }); }]
+    ].map(function (x) { return { label: x[1], color: TIERS[x[0]].color, pick: x[2] }; });
+    var spriteColor = adminMode ? (pendingAll + blockedAll > 0 ? TIERS[3].color : TIERS[1].color) : (s.moment ? mc.color : TIERS[s.spriteLevel].color);
+    var miniRows = adminMode
+      ? [{ k: "待你核准", v: pendingAll + " 筆" }, { k: "禁止級事件", v: blockedAll + " 筆" }, { k: "團隊本月 Token", v: "812,000" }]
+      : [{ k: "今天的 AI 行動", v: "7 筆" }, { k: "今日 Token", v: "27,160" }, { k: "待主管核准", v: pendingMine + " 筆" }];
+
+    return {
+      accent: accent,
+      isLogin: !isApp, isApp: isApp,
+      empInput: s.empInput, onEmp: function (e) { set({ empInput: e.target.value, loginErr: false }); }, doLogin: doLogin,
+      hasLoginErr: s.loginErr, demoAccounts: demoAccounts,
+      me: me, isUserMode: !adminMode, modeSubtitle: adminMode ? "管理員模式：團隊 AI 行為治理" : "使用者模式：我的 AI 行為護照",
+      userPressed: adminMode ? "false" : "true", adminPressed: adminMode ? "true" : "false",
+      userBtnBg: adminMode ? "#fcfcfb" : "#0b0b0b", userBtnFg: adminMode ? "#0b0b0b" : "#ffffff",
+      adminBtnBg: adminMode ? "#0b0b0b" : "#fcfcfb", adminBtnFg: adminMode ? "#ffffff" : "#0b0b0b",
+      toUser: function () { set({ mode: "user", tab: "overview", moment: null, spriteOpen: false }); },
+      toAdmin: function () { set({ mode: "admin", tab: "team", moment: null, spriteOpen: false, hideDash: false }); },
+      logout: function () { set({ screen: "login", meId: null, empInput: "", mode: "user", moment: null, spriteOpen: false }); },
+      toggleDash: function () { set({ hideDash: !s.hideDash }); }, dashToggleLabel: s.hideDash ? "開啟 Dashboard" : "收起 Dashboard",
+      showDash: adminMode || !s.hideDash, showWork: !adminMode && s.hideDash,
+      tierDemos: tierDemos, hasDemoNote: !!s.demoNote, demoNote: s.demoNote,
+      tabs: tabs,
+      isOverview: !adminMode && s.tab === "overview", isDeid: !adminMode && s.tab === "deid", isAgent: !adminMode && s.tab === "agent",
+      isLedger: !adminMode && s.tab === "ledger", isMarket: !adminMode && s.tab === "market",
+      isTeam: adminMode && s.tab === "team", isApprove: adminMode && s.tab === "approve", isUsage: adminMode && s.tab === "usage",
+      isAudit: adminMode && s.tab === "audit", isSkillAdmin: adminMode && s.tab === "skilladmin",
+      userKpis: userKpis, myTokenBars: myTokenBars, tierRows: tierRows, recent: recent,
+      input: s.input, onInput: function (e) { set({ input: e.target.value }); },
+      useSample: function () { set({ input: SAMPLE, restored: false }); }, clearInput: function () { set({ input: "", restored: false }); },
+      piiChips: piiChips, noPii: piiChips.length === 0, origSegs: d.orig, maskedSegs: d.masked, replySegs: replySegs,
+      toggleRestore: function () { set({ restored: !s.restored }); }, restoredStr: s.restored ? "true" : "false",
+      restoreLabel: s.restored ? "顯示代碼版本" : "在本機還原個資",
+      restoreHint: s.restored ? "已用本機對應表把代碼換回真實資料，AI 端從頭到尾沒看過原始個資。" : "AI 只看到代碼。按右上按鈕可在你的電腦上還原。",
+      level: level, flow: flow, steps: steps,
+      wmRows: wmRows, wmIsVisible: isVis, wmIsInvisible: !isVis,
+      wmVisPressed: isVis ? "true" : "false", wmInvPressed: isVis ? "false" : "true",
+      wmVisBg: isVis ? "#0b0b0b" : "#fcfcfb", wmVisFg: isVis ? "#ffffff" : "#0b0b0b", wmInvBg: isVis ? "#fcfcfb" : "#0b0b0b", wmInvFg: isVis ? "#0b0b0b" : "#ffffff",
+      wmVisible: function () { set({ wm: "visible" }); }, wmInvisible: function () { set({ wm: "invisible" }); },
+      trace: function () { set({ traced: true }); }, traced: s.traced, lastHash: ledger[ledger.length - 1].hash,
+      signoff: signoff, ledgerCount: ledger.length, ledgerShown: ledgerShown, originStats: originStats, originFilters: originFilters,
+      verify: function () { set({ verified: true }); }, verified: s.verified,
+      visibleCount: vis.length, totalSkills: SKILLS.length, skillCards: skillCards, scopeFilters: scopeFilters, publishScopes: publishScopes,
+      submitSkill: function () { var o = Object.assign({}, s.skillApproved); delete o.mine; set({ published: true, skillApproved: o }); },
+      hasPublishMsg: !!publishMsg, publishMsg: publishMsg,
+      adminKpis: adminKpis, members: members, hasMemberDetail: !!vm, memberDetail: memberDetail,
+      queueRows: queueRows, selectedCount: selectedIds.length,
+      selectAll: function () { var sel = {}; s.queue.forEach(function (q) { if (q.status === "pending") sel[q.id] = true; }); set({ selected: sel }); },
+      bulkApprove: function () { setStatus(selectedIds, "approved"); }, bulkReject: function () { setStatus(selectedIds, "rejected"); },
+      memberTokenBars: memberTokenBars, toolTokenBars: toolTokenBars, teamTierBars: teamTierBars, radar: radar,
+      hmCols: hmCols, hmRows: hmRows, hmLegend: SEQ, audit: audit, exportReport: function () { set({ exported: true }); }, exported: s.exported,
+      skillQueue: skillQueue, anomalies: anomalies,
+      hasMoment: !!s.moment && !adminMode, mc: mc, closeMoment: close,
+      showMini: s.spriteOpen && !(s.moment && !adminMode), miniRows: miniRows,
+      hasLastEvent: !adminMode && !!s.lastEvent, lastEvent: s.lastEvent,
+      miniActionLabel: adminMode ? "前往待核准" : (s.hideDash ? "開啟 Dashboard" : "前往總覽"),
+      miniAction: function () { if (adminMode) set({ tab: "approve", spriteOpen: false }); else go("overview"); },
+      spriteExpanded: (s.spriteOpen || !!s.moment) ? "true" : "false", spriteColor: spriteColor,
+      toggleSprite: function () { if (s.moment && !adminMode) set({ moment: null }); else set({ spriteOpen: !s.spriteOpen }); }
+    };
+  }
+}
+
+DC.mount(Component);
+</script>
+</body>
+</html>
