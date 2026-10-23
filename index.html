@@ -3,25 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>永豐AI精靈</title>
+<title>AI豐控台</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#f4f3ef;color:#0b0b0b;font-family:'Noto Sans TC',system-ui,sans-serif}
-a{color:#256abf}a:hover{color:#104281}
+body{margin:0;background:#f5f2e9;color:#444e4f;font-family:'Noto Sans CJK TC','Noto Sans TC',system-ui,sans-serif}
+a{color:#1b4ca7}a:hover{color:#133a80}
 .card{background:#fcfcfb;border:1px solid #e2e0da;border-radius:14px;padding:20px;box-sizing:border-box;min-width:0}
 .h2{font-size:17px;font-weight:700;margin:0}
 .muted{color:#52514e}
 .small{font-size:13px}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#f0efec;font-size:13px;color:#0b0b0b;white-space:nowrap}
-.btn{min-height:44px;padding:0 18px;border-radius:10px;border:1px solid #c9c7bf;background:#fcfcfb;color:#0b0b0b;font:inherit;font-size:14px;cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#f0efec;font-size:13px;color:#444e4f;white-space:nowrap}
+.btn{min-height:44px;padding:0 18px;border-radius:10px;border:1px solid #c9c7bf;background:#fcfcfb;color:#444e4f;font:inherit;font-size:14px;cursor:pointer}
 .btn:hover{filter:brightness(0.96)}
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
 .pii{background:#fde7c3;border-bottom:2px solid #c77700;border-radius:3px;padding:0 2px}
 .tok{background:#cde2fb;color:#0d366b;border-radius:3px;padding:0 2px;font-weight:500}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
-.tbl th{text-align:left;font-weight:500;color:#52514e;padding:10px 12px;border-bottom:1px solid #e2e0da;white-space:nowrap}
+.tbl th{text-align:left;font-weight:500;color:#444e4f;background:#f3eddc;padding:10px 12px;border-bottom:2px solid #b19545;white-space:nowrap}
 .tbl td{padding:10px 12px;border-bottom:1px solid #eeece6;vertical-align:top}
 textarea,input{font:inherit}
 </style>
@@ -32,14 +32,15 @@ textarea,input{font:inherit}
 
 <!-- ===================== 登入 ===================== -->
 <sc-if value="{{isLogin}}" hint-placeholder-val="{{ true }}">
+  <div aria-hidden="true" style="position: fixed; top: 0; left: 0; right: 0; height: 6px; background: {{brand}}"></div>
   <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box">
     <div class="card" style="width: 420px; max-width: 100%; display: flex; flex-direction: column; gap: 16px; padding: 32px">
       <div style="display: flex; align-items: center; gap: 12px">
-        <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+        <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{brand}}; display: flex; align-items: center; justify-content: center">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
         </div>
         <div>
-          <h1 style="margin: 0; font-size: 22px">永豐AI精靈</h1>
+          <h1 style="margin: 0; font-size: 22px">AI豐控台 <span class="muted" style="font-size: 14px; font-weight: 500">AI Control Tower</span></h1>
           <div class="small muted">員工 AI 行為治理系統</div>
         </div>
       </div>
@@ -63,15 +64,16 @@ textarea,input{font:inherit}
 
 <!-- ===================== 主系統 ===================== -->
 <sc-if value="{{isApp}}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" style="position: fixed; top: 0; left: 0; right: 0; height: 6px; background: {{brand}}; z-index: 40"></div>
 <div style="max-width: 1280px; margin: 0 auto; padding: 24px 20px 120px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
 
   <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
     <div style="display: flex; align-items: center; gap: 12px">
-      <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+      <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{brand}}; display: flex; align-items: center; justify-content: center">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
       </div>
       <div>
-        <h1 style="margin: 0; font-size: 22px">永豐AI精靈</h1>
+        <h1 style="margin: 0; font-size: 22px">AI豐控台 <span class="muted" style="font-size: 14px; font-weight: 500">AI Control Tower</span></h1>
         <div class="small muted">{{modeSubtitle}}</div>
       </div>
     </div>
@@ -147,18 +149,18 @@ textarea,input{font:inherit}
           <section class="card" style="display: flex; flex-direction: column; gap: 14px">
             <div>
               <h2 class="h2">Token 用量追蹤</h2>
-              <div class="muted small" style="margin-top: 4px">本月 182,400 / 配額 300,000 tokens</div>
+              <div class="muted small" style="margin-top: 4px">本月 182,400 / 配額 300,000 tokens・各工具占比如下</div>
             </div>
             <div aria-label="本月配額使用 61%" style="height: 14px; background: #f0efec; border-radius: 4px">
-              <div style="height: 14px; width: 61%; background: #2a78d6; border-radius: 4px"></div>
+              <div style="height: 14px; width: 61%; background: #1b4ca7; border-radius: 4px"></div>
             </div>
             <div class="small muted">已用 61%，依目前速度月底約用到 88%</div>
             <div class="small" style="padding: 8px 12px; border-radius: 8px; background: #f0efec">用途：成本管理與異常偵測，不作為績效考核依據。</div>
             <div style="display: flex; flex-direction: column; gap: 10px">
               <sc-for list="{{myTokenBars}}" as="b" hint-placeholder-count="4">
-                <div title="{{b.tip}}" style="display: grid; grid-template-columns: 150px minmax(0, 1fr) 72px; gap: 10px; align-items: center">
+                <div title="{{b.tip}}" style="display: grid; grid-template-columns: 150px minmax(0, 1fr) 128px; gap: 10px; align-items: center">
                   <div class="small">{{b.label}}</div>
-                  <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+                  <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #1b4ca7; border-radius: 0 4px 4px 0"></div></div>
                   <div class="small mono" style="text-align: right">{{b.value}}</div>
                 </div>
               </sc-for>
@@ -317,6 +319,79 @@ textarea,input{font:inherit}
       </div>
     </sc-if>
 
+    <!-- ========== 使用者：iWish 臨櫃 ========== -->
+    <sc-if value="{{isIwish}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <section class="card" style="display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-start">
+            <div>
+              <h2 class="h2">情境：iWish 臨櫃 AI 預填表單</h2>
+              <div class="muted small" style="margin-top: 4px">以松江分行櫃員 T31508 的視角示範：AI 依客戶口述與證件照片預填表單，行員核對標示的欄位後才完成交易</div>
+            </div>
+            <button class="btn" onClick="{{iwReset}}">重新示範</button>
+          </div>
+          <div aria-label="流程" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <sc-for list="{{iwSteps}}" as="w" hint-placeholder-count="3">
+              <span style="display: inline-flex; align-items: center; gap: 8px">
+                <span class="chip" style="background: {{w.bg}}; color: {{w.fg}}; font-weight: 500">{{w.label}}</span>
+                <sc-if value="{{w.arrow}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" class="muted">→</span></sc-if>
+              </span>
+            </sc-for>
+          </div>
+        </section>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px">
+          <section class="card" style="display: flex; flex-direction: column; gap: 10px">
+            <h2 class="h2">① 客戶口述需求</h2>
+            <div class="muted small">語音轉文字（iWish 臨櫃 AI Agent）</div>
+            <div style="background: #e8f1fc; padding: 12px 14px; border-radius: 12px; line-height: 1.8">「我要從我的活存轉五萬塊到我女兒林小美的帳戶，帳號是 807-1234-5674321。另外我換手機了，新號碼寫在申請書上。」</div>
+            <div class="small muted">另附：客戶填寫的變更申請書照片 1 張（AI 以 OCR 擷取）</div>
+          </section>
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+              <h2 class="h2">② 行員確認畫面</h2>
+              <span class="chip" style="background: #fff4d6; color: #6b4a00; font-weight: 500">需核對 {{iwTodo}} 欄</span>
+            </div>
+            <div class="muted small">橘框為 AI 從語音或照片擷取、需與客戶核對的欄位；核對後打勾</div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <sc-for list="{{iwFields}}" as="f" hint-placeholder-count="6">
+                <div style="display: grid; grid-template-columns: 30px 96px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 10px; background: #fcfcfb; border: 2px solid {{f.border}}">
+                  <div>
+                    <sc-if value="{{f.needCheck}}" hint-placeholder-val="{{ true }}">
+                      <input type="checkbox" id="{{f.cbId}}" checked="{{f.checked}}" onChange="{{f.toggle}}" aria-label="{{f.cbLabel}}" style="width: 22px; height: 22px; margin: 0">
+                    </sc-if>
+                  </div>
+                  <div class="small muted" style="padding-top: 2px">{{f.label}}</div>
+                  <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                    <div style="font-weight: 500">{{f.value}}</div>
+                    <div class="small muted">來源：{{f.source}}{{f.note}}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{iwNotDone}}" hint-placeholder-val="{{ true }}">
+              <button class="btn" onClick="{{iwConfirm}}" style="align-self: flex-start; background: {{accent}}; border-color: {{accent}}; color: #ffffff">確認並完成交易</button>
+            </sc-if>
+            <sc-if value="{{iwHasMsg}}" hint-placeholder-val="{{ false }}">
+              <div class="small" role="status" style="padding: 10px 14px; border-radius: 10px; background: {{iwMsgBg}}; line-height: 1.7">{{iwMsg}}</div>
+            </sc-if>
+          </section>
+        </div>
+        <sc-if value="{{iwDone}}" hint-placeholder-val="{{ false }}">
+          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
+            <h2 class="h2">③ 確認紀錄已寫入帳本</h2>
+            <div style="display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 8px 12px; font-size: 14px">
+              <span class="muted">發起者</span><span><span class="chip" style="background: #fff4d6; color: #6b4a00; font-weight: 500">AI 預填・行員確認</span></span>
+              <span class="muted">確認者</span><span class="mono">T31508 松江分行櫃員</span>
+              <span class="muted">AI 預填欄位</span><span>{{iwTotal}} 欄，其中 {{iwNeed}} 欄經行員逐欄核對</span>
+              <span class="muted">確認時間</span><span class="mono">2026/10/19 15:05</span>
+              <span class="muted">本筆雜湊</span><span class="mono">{{iwHash}}</span>
+            </div>
+            <div class="small muted">確認紀錄與工號綁定。日後若有爭議，可證明哪些欄位由 AI 預填、哪些經行員核對。</div>
+          </section>
+        </sc-if>
+      </div>
+    </sc-if>
+
     <!-- ========== 使用者：浮水印與帳本 ========== -->
     <sc-if value="{{isLedger}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; flex-direction: column; gap: 16px">
@@ -338,7 +413,7 @@ textarea,input{font:inherit}
               </div>
               <sc-if value="{{wmIsVisible}}" hint-placeholder-val="{{ true }}">
                 <div aria-hidden="true" style="position: absolute; inset: -40%; z-index: 2; pointer-events: none; transform: rotate(-24deg); display: flex; flex-direction: column; justify-content: center; gap: 46px">
-                  <sc-for list="{{wmRows}}" as="w" hint-placeholder-count="8"><div class="mono" style="white-space: nowrap; color: rgba(37, 106, 191, 0.16); font-size: 15px; letter-spacing: 1px">{{w}}</div></sc-for>
+                  <sc-for list="{{wmRows}}" as="w" hint-placeholder-count="8"><div class="mono" style="white-space: nowrap; color: rgba(27, 76, 167, 0.16); font-size: 15px; letter-spacing: 1px">{{w}}</div></sc-for>
                 </div>
               </sc-if>
             </div>
@@ -373,6 +448,7 @@ textarea,input{font:inherit}
             <div>
               <h2 class="h2">個人 AI 帳本</h2>
               <div class="muted small" style="margin-top: 4px">每筆紀錄包含前一筆的雜湊值，任何一筆被改動，後面整串都會對不上</div>
+              <div class="small" style="margin-top: 4px">例：#03 是你下的指令；#04、#05 是 Agent 自行發起的查詢，回溯至 #03。帳本提供個案歸責所需的證據，系統不替人判定責任。</div>
             </div>
             <button class="btn" onClick="{{verify}}">驗證帳本完整性</button>
           </div>
@@ -407,6 +483,7 @@ textarea,input{font:inherit}
             <div>
               <h2 class="h2">行內 Skill 市場</h2>
               <div class="muted small" style="margin-top: 4px">同仁開發、經四道關卡審核上架的 AI Skill。依上架範圍，你可見 {{visibleCount}} 個，全行共 {{totalSkills}} 個。</div>
+              <div class="small" style="margin-top: 6px">權限聲明在執行時也強制，超出聲明即列第 4 級攔截；每次更新重跑四道關卡；回報達門檻即暫停並通知開發者。</div>
               <div class="small" style="margin-top: 6px">Skill 本身瑕疵由開發者負主要責任，審核主管依個案歸責；使用錯誤由下指令者負責。</div>
             </div>
           </div>
@@ -422,18 +499,22 @@ textarea,input{font:inherit}
                 <span class="chip" style="background: {{sk.scopeBg}}; color: {{sk.scopeFg}}">{{sk.scopeLabel}}</span>
               </div>
               <div class="small" style="line-height: 1.7">{{sk.desc}}</div>
+              <div class="small"><span class="muted">權限聲明：</span>{{sk.perm}}</div>
               <div style="display: flex; flex-wrap: wrap; gap: 8px">
                 <span class="chip"><span class="dot" style="background: {{sk.tierColor}}"></span>{{sk.tierShort}}</span>
                 <span class="chip">{{sk.author}}</span>
-                <span class="chip mono">{{sk.downloads}} 次下載</span>
+                <span class="chip mono">{{sk.downloads}} 次採用</span>
               </div>
-              <button class="btn" onClick="{{sk.toggle}}" aria-pressed="{{sk.installedStr}}" style="margin-top: auto; background: {{sk.btnBg}}; color: {{sk.btnFg}}; border-color: {{sk.btnBd}}">{{sk.btnLabel}}</button>
+              <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px">
+                <button class="btn" onClick="{{sk.toggle}}" aria-pressed="{{sk.installedStr}}" style="flex: 1; background: {{sk.btnBg}}; color: {{sk.btnFg}}; border-color: {{sk.btnBd}}">{{sk.btnLabel}}</button>
+                <button class="btn" onClick="{{sk.report}}">{{sk.reportLabel}}</button>
+              </div>
             </article>
           </sc-for>
         </div>
         <section class="card" style="display: flex; flex-direction: column; gap: 12px">
           <h2 class="h2">上架我的 Skill</h2>
-          <div class="small muted">示範：「受監護名單比對檢核表」。上架時須附權限聲明（存取哪些資料、執行哪些動作），依序通過 AI 程式審查、權限檢驗、資安檢驗（不得連外網），最後由主管人工審核。</div>
+          <div class="small muted">示範：「受監護名單比對檢核表」。上架時須附權限聲明（存取哪些資料、執行哪些動作），依序通過 AI 程式碼審查、權限檢驗、資安檢驗（沙箱實測，不得連外網），最後由主管人工審核範圍與業務必要性。</div>
           <div role="group" aria-label="選擇開放範圍" style="display: flex; flex-wrap: wrap; gap: 8px">
             <sc-for list="{{publishScopes}}" as="ps" hint-placeholder-count="3"><button class="btn" onClick="{{ps.pick}}" aria-pressed="{{ps.pressed}}" style="background: {{ps.bg}}; color: {{ps.fg}}">{{ps.label}}</button></sc-for>
           </div>
@@ -458,14 +539,14 @@ textarea,input{font:inherit}
         <section class="card" style="display: flex; flex-direction: column; gap: 12px">
           <div>
             <h2 class="h2">下屬 AI 行為</h2>
-            <div class="small muted" style="margin-top: 4px">主管可看到直屬同仁的行為中繼資料（工具、風險等級、Token）。對話原文需經稽核授權才能調閱。</div>
+            <div class="small muted" style="margin-top: 4px">主管可看到直屬同仁的行為中繼資料（工具、風險等級、Token）。對話原文須經稽核授權才能調閱；監控目的與範圍明定於內規，並事先告知同仁。</div>
           </div>
           <div style="overflow-x: auto">
             <table class="tbl">
-              <thead><tr><th>工號</th><th>姓名</th><th>職稱</th><th>本週 AI 行動</th><th>本月 Token</th><th>第 3、4 級</th><th>健康度</th><th></th></tr></thead>
+              <thead><tr><th>工號</th><th>姓名</th><th>職稱</th><th>本週 AI 行動</th><th>本月 Token</th><th>第 3、4 級</th><th></th></tr></thead>
               <tbody>
                 <sc-for list="{{members}}" as="m" hint-placeholder-count="4">
-                  <tr><td class="mono">{{m.id}}</td><td>{{m.name}}</td><td>{{m.title}}</td><td class="mono">{{m.actions}}</td><td class="mono">{{m.tokensFmt}}</td><td class="mono">{{m.high}}</td><td class="mono">{{m.health}}</td><td><button class="btn" onClick="{{m.view}}" aria-pressed="{{m.viewing}}" style="min-height: 36px">檢視</button></td></tr>
+                  <tr><td class="mono">{{m.id}}</td><td>{{m.name}}</td><td>{{m.title}}</td><td class="mono">{{m.actions}}</td><td class="mono">{{m.tokensFmt}}</td><td class="mono">{{m.high}}</td><td><button class="btn" onClick="{{m.view}}" aria-pressed="{{m.viewing}}" style="min-height: 36px">檢視</button></td></tr>
                 </sc-for>
               </tbody>
             </table>
@@ -495,7 +576,7 @@ textarea,input{font:inherit}
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-end">
           <div>
             <h2 class="h2">待核准的高風險 AI 行為</h2>
-            <div class="small muted" style="margin-top: 4px">第 3 級須經你核准才會執行；第 4 級已自動攔截，請檢視後處理。</div>
+            <div class="small muted" style="margin-top: 4px">第 3 級須經你核准才會執行；第 4 級已自動攔截，請檢視後處理。每筆皆附白話摘要；批次核准會在帳本另行標記。</div>
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: 8px">
             <button class="btn" onClick="{{selectAll}}">全選待核准</button>
@@ -549,7 +630,7 @@ textarea,input{font:inherit}
           <sc-for list="{{memberTokenBars}}" as="b" hint-placeholder-count="4">
             <div title="{{b.tip}}" style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 80px; gap: 10px; align-items: center">
               <div class="small">{{b.label}}</div>
-              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #1b4ca7; border-radius: 0 4px 4px 0"></div></div>
               <div class="small mono" style="text-align: right">{{b.value}}</div>
             </div>
           </sc-for>
@@ -559,7 +640,7 @@ textarea,input{font:inherit}
           <sc-for list="{{toolTokenBars}}" as="b" hint-placeholder-count="5">
             <div title="{{b.tip}}" style="display: grid; grid-template-columns: 140px minmax(0, 1fr) 80px; gap: 10px; align-items: center">
               <div class="small">{{b.label}}</div>
-              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #1b4ca7; border-radius: 0 4px 4px 0"></div></div>
               <div class="small mono" style="text-align: right">{{b.value}}</div>
             </div>
           </sc-for>
@@ -569,7 +650,7 @@ textarea,input{font:inherit}
           <sc-for list="{{teamTierBars}}" as="b" hint-placeholder-count="4">
             <div title="{{b.tip}}" style="display: grid; grid-template-columns: 140px minmax(0, 1fr) 48px; gap: 10px; align-items: center">
               <div class="small" style="display: flex; align-items: center; gap: 6px"><span class="dot" style="background: {{b.color}}"></span>{{b.label}}</div>
-              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #2a78d6; border-radius: 0 4px 4px 0"></div></div>
+              <div style="height: 12px; background: #f0efec; border-radius: 0 4px 4px 0"><div style="height: 12px; width: {{b.pct}}; background: #1b4ca7; border-radius: 0 4px 4px 0"></div></div>
               <div class="small mono" style="text-align: right">{{b.value}}</div>
             </div>
           </sc-for>
@@ -644,7 +725,7 @@ textarea,input{font:inherit}
       <section class="card" style="display: flex; flex-direction: column; gap: 12px">
         <div>
           <h2 class="h2">Skill 上架審核</h2>
-          <div class="small muted" style="margin-top: 4px">每個 Skill 依序通過 AI 程式審查、權限檢驗、資安檢驗（不得連外網），最後才由你人工審核開放範圍與業務必要性。</div>
+          <div class="small muted" style="margin-top: 4px">每個 Skill 依序通過 AI 程式碼審查、權限檢驗、資安檢驗（沙箱實測，不得連外網），最後才由你人工審核開放範圍與業務必要性。</div>
         </div>
         <sc-for list="{{skillQueue}}" as="sq" hint-placeholder-count="2">
           <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px; border-radius: 12px; border: 1px solid #e2e0da">
@@ -685,8 +766,8 @@ textarea,input{font:inherit}
       </div>
     </sc-if>
     <sc-if value="{{showMini}}" hint-placeholder-val="{{ false }}">
-      <div role="dialog" aria-label="永豐AI精靈狀態" style="width: 300px; max-width: 100%; box-sizing: border-box; background: #fcfcfb; border: 1px solid #d8d6cf; border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(11, 11, 11, 0.12); display: flex; flex-direction: column; gap: 10px">
-        <div style="font-weight: 700">永豐AI精靈</div>
+      <div role="dialog" aria-label="隨行精靈狀態" style="width: 300px; max-width: 100%; box-sizing: border-box; background: #fcfcfb; border: 1px solid #d8d6cf; border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(11, 11, 11, 0.12); display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 700">隨行精靈</div>
         <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; font-size: 14px">
           <sc-for list="{{miniRows}}" as="mr" hint-placeholder-count="3"><span class="muted">{{mr.k}}</span><span class="mono">{{mr.v}}</span></sc-for>
         </div>
@@ -694,10 +775,13 @@ textarea,input{font:inherit}
         <button class="btn" onClick="{{miniAction}}" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff">{{miniActionLabel}}</button>
       </div>
     </sc-if>
-    <button onClick="{{toggleSprite}}" aria-label="永豐AI精靈" aria-expanded="{{spriteExpanded}}" style="position: relative; width: 60px; height: 60px; border-radius: 50%; border: none; background: {{accent}}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(11, 11, 11, 0.2)">
+    <div style="display: flex; align-items: center; gap: 10px">
+    <sc-if value="{{hasSpriteTag}}" hint-placeholder-val="{{ false }}"><span class="chip" style="font-weight: 500; box-shadow: 0 2px 8px rgba(11, 11, 11, 0.12)"><span class="dot" style="background: {{spriteColor}}"></span>{{spriteTag}}</span></sc-if>
+    <button onClick="{{toggleSprite}}" aria-label="隨行精靈" aria-expanded="{{spriteExpanded}}" style="position: relative; width: 60px; height: 60px; border-radius: 50%; border: none; background: {{accent}}; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(11, 11, 11, 0.2)">
       <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
       <span aria-hidden="true" style="position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: {{spriteColor}}; border: 3px solid #fcfcfb"></span>
     </button>
+    </div>
   </div>
 
 </div>
@@ -791,9 +875,9 @@ var ACCOUNTS = {
 };
 
 var TIERS = {
-  4: { label: "第 4 級・禁止", short: "第 4 級 禁止", color: "#d03b3b", handling: "自動攔截，精靈立即通知本人與主管", example: "把未遮罩的身分證字號、帳號貼到外部公開 AI；用未上架的 Skill 存取客戶資料", mine: 0, team: 1 },
-  3: { label: "第 3 級・高風險", short: "第 3 級 高風險", color: "#ec835a", handling: "精靈跳出通知，須經主管核准才會執行", example: "AI 寫入核心系統、對客戶寄送通知、影響客戶權益的判斷", mine: 1, team: 7 },
-  2: { label: "第 2 級・有限風險", short: "第 2 級 有限", color: "#fab219", handling: "不跳出，精靈小點轉黃；產出須標示 AI 生成", example: "處理已遮罩的機密資料、AI 產出將提供他人使用", mine: 9, team: 31 },
+  4: { label: "第 4 級・禁止", short: "第 4 級 禁止", color: "#d03b3b", handling: "自動攔截，通報本人與主管；精靈立即跳出", example: "把未遮罩的身分證字號、帳號貼到外部公開 AI；用未上架的 Skill 存取客戶資料；Skill 超出權限聲明", mine: 0, team: 1 },
+  3: { label: "第 3 級・高風險", short: "第 3 級 高風險", color: "#ec835a", handling: "暫停，經主管核准後執行；精靈跳出通知", example: "AI 寫入核心系統、對客戶寄送通知、影響客戶權益的判斷（帳戶限制、授信）", mine: 1, team: 7 },
+  2: { label: "第 2 級・有限風險", short: "第 2 級 有限", color: "#fab219", handling: "放行，產出須標示 AI 生成；精靈小點轉黃，不打擾", example: "處理已遮罩的機密資料、AI 產出將提供他人使用", mine: 9, team: 31 },
   1: { label: "第 1 級・低風險", short: "第 1 級 低", color: "#0ca30c", handling: "只記錄，不打擾", example: "翻譯、摘要公開或一般內部資料", mine: 14, team: 58 }
 };
 
@@ -820,16 +904,16 @@ var LEDGER = [
 ];
 
 var ORIGIN = {
-  human: { label: "人工發起", bg: "#f0efec", fg: "#0b0b0b" },
+  human: { label: "人工發起", bg: "#f0efec", fg: "#444e4f" },
   ai: { label: "AI 代理發起", bg: "#e8f1fc", fg: "#104281" },
   aiApproved: { label: "AI 提出・人工核准", bg: "#fff4d6", fg: "#6b4a00" }
 };
 
 var MEMBERS = [
-  { id: "S12345", name: "陳怡君", title: "專員", actions: 24, tokens: 182400, high: 1, health: 92 },
-  { id: "S12346", name: "李志豪", title: "專員", actions: 31, tokens: 246900, high: 2, health: 85 },
-  { id: "S12347", name: "張雅婷", title: "資深專員", actions: 18, tokens: 131500, high: 1, health: 90 },
-  { id: "S12348", name: "黃冠宇", title: "專員", actions: 27, tokens: 251200, high: 3, health: 71 }
+  { id: "S12345", name: "陳怡君", title: "專員", actions: 24, tokens: 182400, high: 1 },
+  { id: "S12346", name: "李志豪", title: "專員", actions: 31, tokens: 246900, high: 2 },
+  { id: "S12347", name: "張雅婷", title: "資深專員", actions: 18, tokens: 131500, high: 1 },
+  { id: "S12348", name: "黃冠宇", title: "專員", actions: 27, tokens: 251200, high: 3 }
 ];
 
 var MEMBER_LOG = {
@@ -863,13 +947,13 @@ var QUEUE0 = [
 ];
 
 var SKILLS = [
-  { id: "k1", name: "客戶來函摘要", desc: "把客戶來函整理成三點摘要與建議回覆方向，自動遮罩個資。", author: "S20518・客服中心", dept: "客服中心", team: "來函組", scope: "all", tier: 2, downloads: 1284 },
-  { id: "k2", name: "英文函件翻譯", desc: "內建法務用語對照表，譯文自動標示 AI 生成。", author: "S31022・法人金融", dept: "法人金融", team: "外匯組", scope: "all", tier: 1, downloads: 2031 },
-  { id: "k3", name: "家事公告欄位擷取", desc: "從司法院家事公告擷取姓名、出生日期與宣告類型。", author: "S12347・作業中心", dept: "作業中心", team: "帳戶監管組", scope: "dept", tier: 2, downloads: 214 },
-  { id: "k4", name: "異常帳戶初篩", desc: "依交易樣態標出疑似警示帳戶，僅供人工複核參考。", author: "S12346・帳戶監管組", dept: "作業中心", team: "帳戶監管組", scope: "team", tier: 3, downloads: 37 },
-  { id: "k5", name: "會議紀錄摘要", desc: "把會議逐字稿轉成決議與待辦，可指定負責人。", author: "S40877・數位幕僚", dept: "數位幕僚", team: "幕僚組", scope: "all", tier: 1, downloads: 3512 },
-  { id: "k6", name: "徵信資料彙整", desc: "彙整財報與信用資料，產出徵信摘要初稿。", author: "S50231・授信審查部", dept: "授信審查部", team: "企金組", scope: "dept", tier: 3, downloads: 402 },
-  { id: "k7", name: "企金授信範本", desc: "企金組內部授信報告範本與用語檢查。", author: "S50112・授信審查部", dept: "授信審查部", team: "企金組", scope: "team", tier: 2, downloads: 58 }
+  { id: "k1", perm: "讀取使用者貼上的來函；產出摘要，個資自動遮罩", name: "客戶來函摘要", desc: "把客戶來函整理成三點摘要與建議回覆方向，自動遮罩個資。", author: "S20518・客服中心", dept: "客服中心", team: "來函組", scope: "all", tier: 2, downloads: 1284 },
+  { id: "k2", perm: "讀取使用者提供的文件；產出譯文", name: "英文函件翻譯", desc: "內建法務用語對照表，譯文自動標示 AI 生成。", author: "S31022・法人金融", dept: "法人金融", team: "外匯組", scope: "all", tier: 1, downloads: 2031 },
+  { id: "k3", perm: "讀取司法院公開公告；擷取欄位，不存取客戶資料", name: "家事公告欄位擷取", desc: "從司法院家事公告擷取姓名、出生日期與宣告類型。", author: "S12347・作業中心", dept: "作業中心", team: "帳戶監管組", scope: "dept", tier: 2, downloads: 214 },
+  { id: "k4", perm: "讀取帳戶交易明細（唯讀）；標記疑似警示帳戶，不可修改帳戶", name: "異常帳戶初篩", desc: "依交易樣態標出疑似警示帳戶，僅供人工複核參考。", author: "S12346・帳戶監管組", dept: "作業中心", team: "帳戶監管組", scope: "team", tier: 3, downloads: 37 },
+  { id: "k5", perm: "讀取會議逐字稿；產出決議與待辦", name: "會議紀錄摘要", desc: "把會議逐字稿轉成決議與待辦，可指定負責人。", author: "S40877・數位幕僚", dept: "數位幕僚", team: "幕僚組", scope: "all", tier: 1, downloads: 3512 },
+  { id: "k6", perm: "讀取財報與信用資料（唯讀）；產出徵信摘要初稿", name: "徵信資料彙整", desc: "彙整財報與信用資料，產出徵信摘要初稿。", author: "S50231・授信審查部", dept: "授信審查部", team: "企金組", scope: "dept", tier: 3, downloads: 402 },
+  { id: "k7", perm: "讀取授信報告草稿；檢查用語", name: "企金授信範本", desc: "企金組內部授信報告範本與用語檢查。", author: "S50112・授信審查部", dept: "授信審查部", team: "企金組", scope: "team", tier: 2, downloads: 58 }
 ];
 var SCOPE = {
   team: { label: "限小組", bg: "#efe8fb", fg: "#4b2a85" },
@@ -896,8 +980,8 @@ class Component extends DCLogic {
     screen: "login", empInput: "", loginErr: false, meId: null, mode: "user", tab: "overview", hideDash: false,
     input: SAMPLE, restored: false, wm: "visible", traced: false, verified: false, exported: false, originFilter: "all",
     queue: QUEUE0.map(function (q) { return Object.assign({}, q); }), selected: {},
-    viewMember: null, scopeFilter: "any", installed: { k1: true }, publishScope: "dept", published: false,
-    skillApproved: {}, moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "", lastEvent: ""
+    viewMember: null, scopeFilter: "any", installed: { k1: true }, reported: {}, publishScope: "dept", published: false,
+    skillApproved: {}, iwChecked: {}, iwDone: false, iwWarn: false, moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "", lastEvent: ""
   };
 
   deid(text) {
@@ -934,7 +1018,8 @@ class Component extends DCLogic {
   renderVals() {
     var self = this;
     var s = this.state;
-    var accent = this.props.accent ?? "#256abf";
+    var accent = this.props.accent ?? "#1b4ca7";
+    var brand = "#c31826";
     var me = ACCOUNTS[s.meId] || { id: "", name: "", title: "", dept: "", team: "", isAdmin: false };
     var isApp = s.screen === "app";
     var userMode = s.mode === "user";
@@ -952,11 +1037,11 @@ class Component extends DCLogic {
     // ---------- tabs ----------
     var tabDef = adminMode
       ? [["team", "團隊總覽"], ["approve", "待核准"], ["usage", "用量與分析"], ["audit", "風險與稽核"], ["skilladmin", "Skill 上架審核"]]
-      : [["overview", "總覽"], ["deid", "去識別化"], ["agent", "Agent 行為翻譯"], ["ledger", "浮水印與帳本"], ["market", "Skill 市場"]];
+      : [["overview", "總覽"], ["deid", "去識別化"], ["agent", "Agent 行為翻譯"], ["iwish", "iWish 臨櫃"], ["ledger", "浮水印與帳本"], ["market", "Skill 市場"]];
     var tabs = tabDef.map(function (d) {
       var on = d[0] === s.tab;
       var label = d[1];
-      return { label: label, pressed: on ? "true" : "false", bg: on ? accent : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", bd: on ? accent : "#c9c7bf", pick: function () { set({ tab: d[0] }); } };
+      return { label: label, pressed: on ? "true" : "false", bg: on ? brand : "#fcfcfb", fg: on ? "#ffffff" : "#444e4f", bd: on ? brand : "#c9c7bf", pick: function () { set({ tab: d[0] }); } };
     });
 
     // ---------- queue ----------
@@ -965,8 +1050,9 @@ class Component extends DCLogic {
     var blockedAll = s.queue.filter(function (q) { return q.status === "blocked"; }).length;
     var pendingMine = q1 && q1.status === "pending" ? 1 : 0;
     var statusLabel = { pending: "待核准", approved: "已核准", rejected: "已退回", blocked: "已攔截，待檢視", handled: "已檢視並輔導" };
-    function setStatus(ids, st) {
-      var q = s.queue.map(function (x) { var y = Object.assign({}, x); if (ids.indexOf(x.id) >= 0 && x.status === "pending") y.status = st; return y; });
+    function labelOf(q) { return statusLabel[q.status] + (q.batch && q.status !== "pending" ? "（批次）" : ""); }
+    function setStatus(ids, st, batch) {
+      var q = s.queue.map(function (x) { var y = Object.assign({}, x); if (ids.indexOf(x.id) >= 0 && x.status === "pending") { y.status = st; y.batch = !!batch; } return y; });
       var sel = Object.assign({}, s.selected); ids.forEach(function (i) { delete sel[i]; });
       set({ queue: q, selected: sel });
     }
@@ -974,7 +1060,7 @@ class Component extends DCLogic {
       var t = TIERS[q.tier];
       return {
         emp: q.emp, name: q.name, action: q.action, detail: q.detail, time: q.time,
-        tierLabel: t.label, tierColor: t.color, statusLabel: statusLabel[q.status],
+        tierLabel: t.label, tierColor: t.color, statusLabel: labelOf(q),
         isPending: q.status === "pending", isBlocked: q.status === "blocked",
         bg: q.status === "pending" || q.status === "blocked" ? "#fcfcfb" : "#f6f5f1",
         cbId: "cb-" + q.id, cbLabel: "選取：" + q.action, checked: !!s.selected[q.id],
@@ -991,9 +1077,11 @@ class Component extends DCLogic {
       { label: "今日 AI 行動", value: "7 筆", note: "其中 2 筆由 AI 代理發起" },
       { label: "本月 Token", value: "182,400", note: "配額 300,000，已用 61%" },
       { label: "待主管核准", value: pendingMine + " 筆", note: pendingMine ? "第 3 級動作已暫停，等待主管王建中" : "目前沒有等待中的動作" },
-      { label: "本週禁止級攔截", value: "0 次", note: "AI 使用健康度 92 分" }
+      { label: "本週禁止級攔截", value: "0 次", note: "本週沒有第 4 級事件" }
     ];
-    var myTokenBars = bars([["行內 GAI 助理", 96200], ["家事宣告 Agent", 58900], ["Skill：客戶來函摘要", 18300], ["Skill：英文函件翻譯", 9000]], " tokens");
+    var myTokenRows = [["行內 GAI 助理", 96200], ["家事宣告 Agent", 58900], ["Skill：客戶來函摘要", 18300], ["Skill：英文函件翻譯", 9000]];
+    var myTokenSum = myTokenRows.reduce(function (a, r) { return a + r[1]; }, 0);
+    var myTokenBars = bars(myTokenRows, " tokens").map(function (b, i) { b.value += "（" + Math.round(myTokenRows[i][1] / myTokenSum * 100) + "%）"; return b; });
     var tierRows = [4, 3, 2, 1].map(function (n) { var t = TIERS[n]; return { label: t.label, color: t.color, handling: t.handling, example: t.example, mine: t.mine }; });
 
     // ---------- ledger ----------
@@ -1004,18 +1092,19 @@ class Component extends DCLogic {
       var row = { id: r.id, time: r.time, tool: r.tool, task: r.task, out: r.out, hash: h, origin: r.origin,
         originLabel: o.label, originBg: o.bg, originFg: o.fg, tierShort: t.short, tierColor: t.color, tokensFmt: fmt(r.tokens),
         principal: r.origin === "human" ? me.id + " 本人" : me.id + "（AI 代理執行）",
-        approver: r.tier >= 3 ? ({ pending: "待 M20001 核准", approved: "M20001 王建中", rejected: "M20001 退回" }[q1 ? q1.status : "pending"] || "待核准") : "不需核准",
+        approver: r.tier >= 3 ? (({ pending: "待 M20001 核准", approved: "M20001 王建中", rejected: "M20001 退回" }[q1 ? q1.status : "pending"] || "待核准") + (q1 && q1.batch && q1.status !== "pending" ? "（批次核准）" : "")) : "不需核准",
         parent: r.parent ? "源自 " + r.parent : "無" };
       prev = h;
       return row;
     });
     var recent = ledger.slice(-4).reverse();
+    function lastHashForIw() { return ledger[ledger.length - 1].hash; }
     var of = s.originFilter;
     var ledgerShown = ledger.filter(function (r) { return of === "all" || r.origin === of; });
     var originStats = ["human", "ai", "aiApproved"].map(function (k) { return { label: ORIGIN[k].label, bg: ORIGIN[k].bg, fg: ORIGIN[k].fg, count: ledger.filter(function (r) { return r.origin === k; }).length }; });
     var originFilters = [["all", "全部"], ["human", "人工發起"], ["ai", "AI 代理發起"], ["aiApproved", "AI 提出・人工核准"]].map(function (f) {
       var on = f[0] === of;
-      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#0b0b0b" : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", pick: function () { set({ originFilter: f[0] }); } };
+      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#444e4f" : "#fcfcfb", fg: on ? "#ffffff" : "#444e4f", pick: function () { set({ originFilter: f[0] }); } };
     });
     var wmText = me.id + " · 2026/10/19 14:32 · 機密 · 僅限內部使用 · " + me.id + " · 2026/10/19 14:32 · 機密 · 僅限內部使用";
     var wmRows = []; for (var i = 0; i < 10; i++) wmRows.push(wmText);
@@ -1054,15 +1143,39 @@ class Component extends DCLogic {
       { title: "產生比對結果與依據", plain: "AI 為每一筆命中寫出理由（例如姓名與出生日期皆相符），讓你知道它為什麼這樣判斷。", tags: ["生成式 AI（LLM）", "可解釋輸出"], where: "行內模型", data: "機密：比對結果", tier: 2, tokens: 3150 },
       { title: "更新 3 個帳戶為受監護狀態", plain: "AI 準備在核心系統把帳戶改成受監護或受輔助宣告狀態，這會限制客戶的交易權限。屬第 3 級，已暫停並送主管核准。", tags: ["核心系統寫入", "影響客戶權益"], where: "行內核心系統", data: "機密：帳戶狀態", tier: 3, tokens: 2300 }
     ];
-    var gate = { pending: ["已送作業中心經理王建中核准，核准前不會執行。", "#fdeee6", "等待主管核准"], approved: ["主管已核准，3 個帳戶狀態已更新，帳本已記錄核准人 M20001。", "#e9f6e9", "已核准並更新"], rejected: ["主管已退回，帳戶狀態未變更，名單轉交人工覆核。", "#f0efec", "主管退回"] }[q1s] || ["", "#f0efec", ""];
+    var gate = { pending: ["已送作業中心經理王建中核准，核准前不會執行。", "#fdeee6", "等待主管核准"], approved: [q1 && q1.batch ? "主管已以批次核准，3 個帳戶狀態已更新；帳本記錄核准人 M20001，並另行標記為批次核准。" : "主管已核准，3 個帳戶狀態已更新，帳本已記錄核准人 M20001。", "#e9f6e9", "已核准並更新"], rejected: ["主管已退回，帳戶狀態未變更，名單轉交人工覆核。", "#f0efec", "主管退回"] }[q1s] || ["", "#f0efec", ""];
     var steps = stepDefs.map(function (st, i) {
       var t = TIERS[st.tier], last = i === stepDefs.length - 1;
       return { n: i + 1, title: st.title, plain: st.plain, tags: st.tags, where: st.where, data: st.data, tierLabel: t.label, tierColor: t.color, tokens: fmt(st.tokens),
         status: last ? gate[2] : "已完成", border: last && q1s === "pending" ? "#ec835a" : "#e2e0da", isGate: last, gateText: gate[0], gateBg: gate[1] };
     });
     var flow = [["司法院公告網站", true], ["RPA 擷取", false], ["行內模型", false], ["客戶資料庫", false], ["核心系統帳戶狀態", false]].map(function (f, i, arr) {
-      return { label: f[0], bg: f[1] ? "#fde1d3" : "#f0efec", fg: f[1] ? "#7a2e0e" : "#0b0b0b", arrow: i < arr.length - 1 };
+      return { label: f[0], bg: f[1] ? "#fde1d3" : "#f0efec", fg: f[1] ? "#7a2e0e" : "#444e4f", arrow: i < arr.length - 1 };
     });
+
+    // ---------- iwish ----------
+    var IW_FIELDS = [
+      ["type", "交易類型", "臨櫃轉帳＋手機號碼變更", "語音", "", false],
+      ["from", "轉出帳戶", "本人活存 ****5678", "客戶資料（已驗證身分）", "", false],
+      ["to", "轉入帳戶", "807-1234-5674321", "語音", "・數字由語音辨識，請客戶覆誦確認", true],
+      ["payee", "受款人", "林小美", "語音", "・戶名須與轉入帳戶相符", true],
+      ["amount", "金額", "新臺幣 50,000 元", "語音", "・「五萬塊」轉換為數字", true],
+      ["phone", "新手機號碼", "0933-210-765", "照片（變更申請書）", "・手寫字以 OCR 辨識", true]
+    ];
+    var iwNeed = IW_FIELDS.filter(function (f) { return f[5]; }).length;
+    var iwChecked = IW_FIELDS.filter(function (f) { return f[5] && s.iwChecked[f[0]]; }).length;
+    var iwFields = IW_FIELDS.map(function (f) {
+      var on = !!s.iwChecked[f[0]];
+      return { label: f[1], value: f[2], source: f[3], note: f[4], needCheck: f[5], checked: on,
+        border: f[5] ? (on ? "#0ca30c" : "#ec835a") : "#e2e0da", cbId: "iw-" + f[0], cbLabel: "已核對：" + f[1],
+        toggle: function () { if (s.iwDone) return; var o = Object.assign({}, s.iwChecked); if (o[f[0]]) delete o[f[0]]; else o[f[0]] = true; set({ iwChecked: o, iwWarn: false }); } };
+    });
+    var iwStage = s.iwDone ? 3 : 2;
+    var iwSteps = ["① 客戶口述需求", "② 行員確認畫面", "③ 確認完成交易"].map(function (l, i, arr) {
+      var on = i + 1 === iwStage, past = i + 1 < iwStage;
+      return { label: l, bg: on ? brand : (past ? "#e9f6e9" : "#f0efec"), fg: on ? "#ffffff" : "#444e4f", arrow: i < arr.length - 1 };
+    });
+    var iwMsg = s.iwDone ? "交易完成，確認紀錄已與工號 T31508 綁定寫入帳本。" : (s.iwWarn ? "還有 " + (iwNeed - iwChecked) + " 個欄位未核對，請與客戶確認後再送出。" : "");
 
     // ---------- market ----------
     function visible(k) { return k.scope === "all" || (k.scope === "dept" && k.dept === me.dept) || (k.scope === "team" && k.team === me.team); }
@@ -1070,23 +1183,26 @@ class Component extends DCLogic {
     var sfKey = s.scopeFilter;
     var skillCards = vis.filter(function (k) { return sfKey === "any" || k.scope === sfKey; }).map(function (k) {
       var inst = !!s.installed[k.id], sc = SCOPE[k.scope], t = TIERS[k.tier];
-      return { name: k.name, desc: k.desc, author: k.author, downloads: fmt(k.downloads + (inst && k.id !== "k1" ? 1 : 0)), scopeLabel: sc.label, scopeBg: sc.bg, scopeFg: sc.fg,
+      return { name: k.name, desc: k.desc, perm: k.perm, author: k.author, downloads: fmt(k.downloads + (inst && k.id !== "k1" ? 1 : 0)), scopeLabel: sc.label, scopeBg: sc.bg, scopeFg: sc.fg,
         tierShort: t.short, tierColor: t.color, installedStr: inst ? "true" : "false", btnLabel: inst ? "已安裝（點選移除）" : "安裝",
-        btnBg: inst ? "#f0efec" : accent, btnFg: inst ? "#0b0b0b" : "#ffffff", btnBd: inst ? "#c9c7bf" : accent,
-        toggle: function () { var o = Object.assign({}, s.installed); if (o[k.id]) delete o[k.id]; else o[k.id] = true; set({ installed: o }); } };
+        btnBg: inst ? "#f0efec" : accent, btnFg: inst ? "#444e4f" : "#ffffff", btnBd: inst ? "#c9c7bf" : accent,
+        toggle: function () { var o = Object.assign({}, s.installed); if (o[k.id]) delete o[k.id]; else o[k.id] = true; set({ installed: o }); },
+        reportLabel: s.reported[k.id] ? "已回報" : "回報問題",
+        report: function () { var o = Object.assign({}, s.reported); o[k.id] = true; set({ reported: o }); } };
     });
     var scopeFilters = [["any", "全部可見"], ["team", "限小組"], ["dept", "限本部門"], ["all", "不限部門"]].map(function (f) {
       var on = f[0] === sfKey;
-      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#0b0b0b" : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", pick: function () { set({ scopeFilter: f[0] }); } };
+      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#444e4f" : "#fcfcfb", fg: on ? "#ffffff" : "#444e4f", pick: function () { set({ scopeFilter: f[0] }); } };
     });
     var publishScopes = [["team", "限小組（帳戶監管組）"], ["dept", "限本部門（作業中心）"], ["all", "不限部門（全行）"]].map(function (f) {
       var on = f[0] === s.publishScope;
-      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#0b0b0b" : "#fcfcfb", fg: on ? "#ffffff" : "#0b0b0b", pick: function () { set({ publishScope: f[0], published: false }); } };
+      return { label: f[1], pressed: on ? "true" : "false", bg: on ? "#444e4f" : "#fcfcfb", fg: on ? "#ffffff" : "#444e4f", pick: function () { set({ publishScope: f[0], published: false }); } };
     });
     var pubApproved = !!s.skillApproved.mine;
-    var publishMsg = s.published ? (pubApproved ? "主管已核准，「受監護名單比對檢核表」已在「" + SCOPE[s.publishScope].label + "」市場上架。" : "已送出上架申請（開放範圍：" + SCOPE[s.publishScope].label + "）。AI 程式審查、權限檢驗、資安檢驗皆已通過，等待主管王建中人工審核。") : "";
+    var publishMsg = s.published ? (pubApproved ? "主管已核准，「受監護名單比對檢核表」已在「" + SCOPE[s.publishScope].label + "」市場上架。" : "已送出上架申請（開放範圍：" + SCOPE[s.publishScope].label + "）。AI 程式碼審查、權限檢驗、資安檢驗皆已通過，等待主管王建中人工審核。") : "";
     var anomalies = [
       { title: "黃冠宇（S12348）10/18 單日用量為平日的 4.2 倍", detail: "集中在同一個 Agent 任務，疑似迴圈重試。已通知本人與資訊單位確認。", color: TIERS[3].color },
+      { title: "李志豪（S12346）帳號 10/17 02:14 在非上班時間大量呼叫 AI", detail: "登入裝置與平常不同，疑似帳號盜用。已暫停該帳號的 AI 存取，並通知本人與資安處確認。", color: TIERS[3].color },
       { title: "團隊用量在配額內", detail: "本月已用 68%，依目前速度月底約 94%。", color: TIERS[1].color }
     ];
 
@@ -1098,7 +1214,7 @@ class Component extends DCLogic {
       { label: "禁止級事件", value: blockedAll + " 筆", note: blockedAll ? "已自動攔截，待你檢視" : "本週已全部處理" }
     ];
     var members = MEMBERS.map(function (m) {
-      return { id: m.id, name: m.name, title: m.title, actions: m.actions, tokensFmt: fmt(m.tokens), high: m.high, health: m.health,
+      return { id: m.id, name: m.name, title: m.title, actions: m.actions, tokensFmt: fmt(m.tokens), high: m.high,
         viewing: s.viewMember === m.id ? "true" : "false", view: function () { set({ viewMember: s.viewMember === m.id ? null : m.id }); } };
     });
     var vm = MEMBERS.filter(function (m) { return m.id === s.viewMember; })[0];
@@ -1114,7 +1230,7 @@ class Component extends DCLogic {
     var hmCols = ["個資遮罩", "機密檔上傳", "外部 API", "第 3 級動作", "第 4 級攔截"];
     var colMax = hmCols.map(function (_, c) { return Math.max.apply(null, DEPTS.map(function (dp) { return dp[1][c]; })); });
     var hmRows = DEPTS.map(function (dp) {
-      return { name: dp[0], cells: dp[1].map(function (v, c) { var lv = Math.min(5, Math.max(1, Math.ceil(v / colMax[c] * 5))); return { v: v, bg: SEQ[lv - 1], fg: lv >= 3 ? "#ffffff" : "#0b0b0b", tip: dp[0] + " · " + hmCols[c] + "：本週 " + v + " 次" }; }) };
+      return { name: dp[0], cells: dp[1].map(function (v, c) { var lv = Math.min(5, Math.max(1, Math.ceil(v / colMax[c] * 5))); return { v: v, bg: SEQ[lv - 1], fg: lv >= 3 ? "#ffffff" : "#444e4f", tip: dp[0] + " · " + hmCols[c] + "：本週 " + v + " 次" }; }) };
     });
     var audit = [
       { chapter: "治理與問責", evidence: "每筆 AI 行動綁定工號、發起者（人或 AI）、審閱人與核准人", status: "符合", color: "#0ca30c" },
@@ -1128,7 +1244,7 @@ class Component extends DCLogic {
     if (s.published) skillQueue.push({ key: "mine", name: "受監護名單比對檢核表", author: "S12345 陳怡君", scope: s.publishScope, tier: 2, perm: "存取客戶姓名、出生日期（唯讀）；動作：產出比對檢核表" });
     skillQueue = skillQueue.map(function (k) {
       var done = !!s.skillApproved[k.key], t = TIERS[k.tier];
-      var checks = [["AI 程式審查", true], ["權限檢驗", true], ["資安檢驗（不連外網）", true], ["人工審核", done]].map(function (c) {
+      var checks = [["AI 程式碼審查", true], ["權限檢驗", true], ["資安檢驗（沙箱，不連外網）", true], ["人工審核", done]].map(function (c) {
         return { label: c[0], state: c[1] ? "通過" : "待你審核", color: c[1] ? "#0ca30c" : "#fab219" };
       });
       return { name: k.name, author: k.author, scopeLabel: SCOPE[k.scope].label, tierShort: t.short, tierColor: t.color, isPending: !done, isDone: done,
@@ -1139,7 +1255,7 @@ class Component extends DCLogic {
     // ---------- sprite ----------
     function go(tab, extra) { var st = { tab: tab, mode: "user", moment: null, spriteOpen: false, hideDash: false }; if (extra) for (var k in extra) st[k] = extra[k]; set(st); }
     function close() { set({ moment: null }); }
-    function act(label, run, primary) { return { label: label, run: run, bg: primary ? accent : "#fcfcfb", fg: primary ? "#ffffff" : "#0b0b0b", bd: primary ? accent : "#c9c7bf" }; }
+    function act(label, run, primary) { return { label: label, run: run, bg: primary ? accent : "#fcfcfb", fg: primary ? "#ffffff" : "#444e4f", bd: primary ? accent : "#c9c7bf" }; }
     var moments = {
       t3: { tag: "第 3 級・高風險", color: TIERS[3].color, title: "已暫停，送主管核准",
         body: "家事宣告 Agent 準備把 3 個帳戶改為受監護狀態，會限制客戶交易權限。動作已暫停，並送作業中心經理王建中核准。",
@@ -1161,14 +1277,14 @@ class Component extends DCLogic {
       : [{ k: "今天的 AI 行動", v: "7 筆" }, { k: "今日 Token", v: "27,160" }, { k: "待主管核准", v: pendingMine + " 筆" }];
 
     return {
-      accent: accent,
+      accent: accent, brand: brand,
       isLogin: !isApp, isApp: isApp,
       empInput: s.empInput, onEmp: function (e) { set({ empInput: e.target.value, loginErr: false }); }, doLogin: doLogin,
       hasLoginErr: s.loginErr, demoAccounts: demoAccounts,
       me: me, isUserMode: !adminMode, modeSubtitle: adminMode ? "管理員模式：團隊 AI 行為治理" : "使用者模式：我的 AI 行為護照",
       userPressed: adminMode ? "false" : "true", adminPressed: adminMode ? "true" : "false",
-      userBtnBg: adminMode ? "#fcfcfb" : "#0b0b0b", userBtnFg: adminMode ? "#0b0b0b" : "#ffffff",
-      adminBtnBg: adminMode ? "#0b0b0b" : "#fcfcfb", adminBtnFg: adminMode ? "#ffffff" : "#0b0b0b",
+      userBtnBg: adminMode ? "#fcfcfb" : "#444e4f", userBtnFg: adminMode ? "#444e4f" : "#ffffff",
+      adminBtnBg: adminMode ? "#444e4f" : "#fcfcfb", adminBtnFg: adminMode ? "#ffffff" : "#444e4f",
       toUser: function () { set({ mode: "user", tab: "overview", moment: null, spriteOpen: false }); },
       toAdmin: function () { set({ mode: "admin", tab: "team", moment: null, spriteOpen: false, hideDash: false }); },
       logout: function () { set({ screen: "login", meId: null, empInput: "", mode: "user", moment: null, spriteOpen: false }); },
@@ -1177,7 +1293,12 @@ class Component extends DCLogic {
       tierDemos: tierDemos, hasDemoNote: !!s.demoNote, demoNote: s.demoNote,
       tabs: tabs,
       isOverview: !adminMode && s.tab === "overview", isDeid: !adminMode && s.tab === "deid", isAgent: !adminMode && s.tab === "agent",
-      isLedger: !adminMode && s.tab === "ledger", isMarket: !adminMode && s.tab === "market",
+      isLedger: !adminMode && s.tab === "ledger", isMarket: !adminMode && s.tab === "market", isIwish: !adminMode && s.tab === "iwish",
+      iwSteps: iwSteps, iwFields: iwFields, iwTodo: iwNeed - iwChecked, iwNeed: iwNeed, iwTotal: IW_FIELDS.length,
+      iwDone: s.iwDone, iwNotDone: !s.iwDone, iwHasMsg: !!iwMsg, iwMsg: iwMsg, iwMsgBg: s.iwDone ? "#e9f6e9" : "#fdeee6",
+      iwHash: fnv(lastHashForIw() + "iwish-T31508-1505"),
+      iwConfirm: function () { if (iwChecked < iwNeed) set({ iwWarn: true }); else set({ iwDone: true, iwWarn: false }); },
+      iwReset: function () { set({ iwChecked: {}, iwDone: false, iwWarn: false }); },
       isTeam: adminMode && s.tab === "team", isApprove: adminMode && s.tab === "approve", isUsage: adminMode && s.tab === "usage",
       isAudit: adminMode && s.tab === "audit", isSkillAdmin: adminMode && s.tab === "skilladmin",
       userKpis: userKpis, myTokenBars: myTokenBars, tierRows: tierRows, recent: recent,
@@ -1190,7 +1311,7 @@ class Component extends DCLogic {
       level: level, flow: flow, steps: steps,
       wmRows: wmRows, wmIsVisible: isVis, wmIsInvisible: !isVis,
       wmVisPressed: isVis ? "true" : "false", wmInvPressed: isVis ? "false" : "true",
-      wmVisBg: isVis ? "#0b0b0b" : "#fcfcfb", wmVisFg: isVis ? "#ffffff" : "#0b0b0b", wmInvBg: isVis ? "#fcfcfb" : "#0b0b0b", wmInvFg: isVis ? "#0b0b0b" : "#ffffff",
+      wmVisBg: isVis ? "#444e4f" : "#fcfcfb", wmVisFg: isVis ? "#ffffff" : "#444e4f", wmInvBg: isVis ? "#fcfcfb" : "#444e4f", wmInvFg: isVis ? "#444e4f" : "#ffffff",
       wmVisible: function () { set({ wm: "visible" }); }, wmInvisible: function () { set({ wm: "invisible" }); },
       trace: function () { set({ traced: true }); }, traced: s.traced, lastHash: ledger[ledger.length - 1].hash,
       signoff: signoff, ledgerCount: ledger.length, ledgerShown: ledgerShown, originStats: originStats, originFilters: originFilters,
@@ -1201,7 +1322,7 @@ class Component extends DCLogic {
       adminKpis: adminKpis, members: members, hasMemberDetail: !!vm, memberDetail: memberDetail,
       queueRows: queueRows, selectedCount: selectedIds.length,
       selectAll: function () { var sel = {}; s.queue.forEach(function (q) { if (q.status === "pending") sel[q.id] = true; }); set({ selected: sel }); },
-      bulkApprove: function () { setStatus(selectedIds, "approved"); }, bulkReject: function () { setStatus(selectedIds, "rejected"); },
+      bulkApprove: function () { setStatus(selectedIds, "approved", true); }, bulkReject: function () { setStatus(selectedIds, "rejected", true); },
       memberTokenBars: memberTokenBars, toolTokenBars: toolTokenBars, teamTierBars: teamTierBars, radar: radar,
       hmCols: hmCols, hmRows: hmRows, hmLegend: SEQ, audit: audit, exportReport: function () { set({ exported: true }); }, exported: s.exported,
       skillQueue: skillQueue, anomalies: anomalies,
@@ -1211,6 +1332,7 @@ class Component extends DCLogic {
       miniActionLabel: adminMode ? "前往待核准" : (s.hideDash ? "開啟 Dashboard" : "前往總覽"),
       miniAction: function () { if (adminMode) set({ tab: "approve", spriteOpen: false }); else go("overview"); },
       spriteExpanded: (s.spriteOpen || !!s.moment) ? "true" : "false", spriteColor: spriteColor,
+      hasSpriteTag: !adminMode && s.spriteLevel >= 2 && !s.moment, spriteTag: TIERS[s.spriteLevel].short,
       toggleSprite: function () { if (s.moment && !adminMode) set({ moment: null }); else set({ spriteOpen: !s.spriteOpen }); }
     };
   }
