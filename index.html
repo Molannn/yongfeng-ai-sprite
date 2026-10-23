@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#f5f2e9;color:#444e4f;font-family:'Noto Sans CJK TC','Noto Sans TC',system-ui,sans-serif}
+body{margin:0;background:#ffffff;color:#444e4f;font-family:'Noto Sans CJK TC','Noto Sans TC',system-ui,sans-serif}
 a{color:#1b4ca7}a:hover{color:#133a80}
-.card{background:#fcfcfb;border:1px solid #e2e0da;border-radius:14px;padding:20px;box-sizing:border-box;min-width:0}
+.card{background:#ffffff;border:1px solid #e2e0da;border-radius:14px;padding:20px;box-sizing:border-box;min-width:0}
 .h2{font-size:17px;font-weight:700;margin:0}
 .muted{color:#52514e}
 .small{font-size:13px}
@@ -21,7 +21,7 @@ a{color:#1b4ca7}a:hover{color:#133a80}
 .tok{background:#cde2fb;color:#0d366b;border-radius:3px;padding:0 2px;font-weight:500}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
-.tbl th{text-align:left;font-weight:500;color:#444e4f;background:#f3eddc;padding:10px 12px;border-bottom:2px solid #b19545;white-space:nowrap}
+.tbl th{text-align:left;font-weight:500;color:#444e4f;background:#eaf0fa;padding:10px 12px;border-bottom:2px solid #1b4ca7;white-space:nowrap}
 .tbl td{padding:10px 12px;border-bottom:1px solid #eeece6;vertical-align:top}
 textarea,input{font:inherit}
 </style>
@@ -36,7 +36,7 @@ textarea,input{font:inherit}
   <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box">
     <div class="card" style="width: 420px; max-width: 100%; display: flex; flex-direction: column; gap: 16px; padding: 32px">
       <div style="display: flex; align-items: center; gap: 12px">
-        <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{brand}}; display: flex; align-items: center; justify-content: center">
+        <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
         </div>
         <div>
@@ -69,7 +69,7 @@ textarea,input{font:inherit}
 
   <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px">
     <div style="display: flex; align-items: center; gap: 12px">
-      <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{brand}}; display: flex; align-items: center; justify-content: center">
+      <div aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"></path><path d="M12 8l1.2 2.6L16 12l-2.8 1.4L12 16l-1.2-2.6L8 12l2.8-1.4z"></path></svg>
       </div>
       <div>
@@ -319,79 +319,6 @@ textarea,input{font:inherit}
       </div>
     </sc-if>
 
-    <!-- ========== 使用者：iWish 臨櫃 ========== -->
-    <sc-if value="{{isIwish}}" hint-placeholder-val="{{ false }}">
-      <div style="display: flex; flex-direction: column; gap: 16px">
-        <section class="card" style="display: flex; flex-direction: column; gap: 14px">
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-start">
-            <div>
-              <h2 class="h2">情境：iWish 臨櫃 AI 預填表單</h2>
-              <div class="muted small" style="margin-top: 4px">以松江分行櫃員 T31508 的視角示範：AI 依客戶口述與證件照片預填表單，行員核對標示的欄位後才完成交易</div>
-            </div>
-            <button class="btn" onClick="{{iwReset}}">重新示範</button>
-          </div>
-          <div aria-label="流程" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
-            <sc-for list="{{iwSteps}}" as="w" hint-placeholder-count="3">
-              <span style="display: inline-flex; align-items: center; gap: 8px">
-                <span class="chip" style="background: {{w.bg}}; color: {{w.fg}}; font-weight: 500">{{w.label}}</span>
-                <sc-if value="{{w.arrow}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" class="muted">→</span></sc-if>
-              </span>
-            </sc-for>
-          </div>
-        </section>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px">
-          <section class="card" style="display: flex; flex-direction: column; gap: 10px">
-            <h2 class="h2">① 客戶口述需求</h2>
-            <div class="muted small">語音轉文字（iWish 臨櫃 AI Agent）</div>
-            <div style="background: #e8f1fc; padding: 12px 14px; border-radius: 12px; line-height: 1.8">「我要從我的活存轉五萬塊到我女兒林小美的帳戶，帳號是 807-1234-5674321。另外我換手機了，新號碼寫在申請書上。」</div>
-            <div class="small muted">另附：客戶填寫的變更申請書照片 1 張（AI 以 OCR 擷取）</div>
-          </section>
-          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
-              <h2 class="h2">② 行員確認畫面</h2>
-              <span class="chip" style="background: #fff4d6; color: #6b4a00; font-weight: 500">需核對 {{iwTodo}} 欄</span>
-            </div>
-            <div class="muted small">橘框為 AI 從語音或照片擷取、需與客戶核對的欄位；核對後打勾</div>
-            <div style="display: flex; flex-direction: column; gap: 8px">
-              <sc-for list="{{iwFields}}" as="f" hint-placeholder-count="6">
-                <div style="display: grid; grid-template-columns: 30px 96px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 10px; background: #fcfcfb; border: 2px solid {{f.border}}">
-                  <div>
-                    <sc-if value="{{f.needCheck}}" hint-placeholder-val="{{ true }}">
-                      <input type="checkbox" id="{{f.cbId}}" checked="{{f.checked}}" onChange="{{f.toggle}}" aria-label="{{f.cbLabel}}" style="width: 22px; height: 22px; margin: 0">
-                    </sc-if>
-                  </div>
-                  <div class="small muted" style="padding-top: 2px">{{f.label}}</div>
-                  <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                    <div style="font-weight: 500">{{f.value}}</div>
-                    <div class="small muted">來源：{{f.source}}{{f.note}}</div>
-                  </div>
-                </div>
-              </sc-for>
-            </div>
-            <sc-if value="{{iwNotDone}}" hint-placeholder-val="{{ true }}">
-              <button class="btn" onClick="{{iwConfirm}}" style="align-self: flex-start; background: {{accent}}; border-color: {{accent}}; color: #ffffff">確認並完成交易</button>
-            </sc-if>
-            <sc-if value="{{iwHasMsg}}" hint-placeholder-val="{{ false }}">
-              <div class="small" role="status" style="padding: 10px 14px; border-radius: 10px; background: {{iwMsgBg}}; line-height: 1.7">{{iwMsg}}</div>
-            </sc-if>
-          </section>
-        </div>
-        <sc-if value="{{iwDone}}" hint-placeholder-val="{{ false }}">
-          <section class="card" style="display: flex; flex-direction: column; gap: 12px">
-            <h2 class="h2">③ 確認紀錄已寫入帳本</h2>
-            <div style="display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 8px 12px; font-size: 14px">
-              <span class="muted">發起者</span><span><span class="chip" style="background: #fff4d6; color: #6b4a00; font-weight: 500">AI 預填・行員確認</span></span>
-              <span class="muted">確認者</span><span class="mono">T31508 松江分行櫃員</span>
-              <span class="muted">AI 預填欄位</span><span>{{iwTotal}} 欄，其中 {{iwNeed}} 欄經行員逐欄核對</span>
-              <span class="muted">確認時間</span><span class="mono">2026/10/19 15:05</span>
-              <span class="muted">本筆雜湊</span><span class="mono">{{iwHash}}</span>
-            </div>
-            <div class="small muted">確認紀錄與工號綁定。日後若有爭議，可證明哪些欄位由 AI 預填、哪些經行員核對。</div>
-          </section>
-        </sc-if>
-      </div>
-    </sc-if>
-
     <!-- ========== 使用者：浮水印與帳本 ========== -->
     <sc-if value="{{isLedger}}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; flex-direction: column; gap: 16px">
@@ -543,10 +470,10 @@ textarea,input{font:inherit}
           </div>
           <div style="overflow-x: auto">
             <table class="tbl">
-              <thead><tr><th>工號</th><th>姓名</th><th>職稱</th><th>本週 AI 行動</th><th>本月 Token</th><th>第 3、4 級</th><th></th></tr></thead>
+              <thead><tr><th>工號</th><th>姓名</th><th>職稱</th><th>本週 AI 行動</th><th>本月 Token</th><th>第 3、4 級</th><th>健康度</th><th></th></tr></thead>
               <tbody>
                 <sc-for list="{{members}}" as="m" hint-placeholder-count="4">
-                  <tr><td class="mono">{{m.id}}</td><td>{{m.name}}</td><td>{{m.title}}</td><td class="mono">{{m.actions}}</td><td class="mono">{{m.tokensFmt}}</td><td class="mono">{{m.high}}</td><td><button class="btn" onClick="{{m.view}}" aria-pressed="{{m.viewing}}" style="min-height: 36px">檢視</button></td></tr>
+                  <tr><td class="mono">{{m.id}}</td><td>{{m.name}}</td><td>{{m.title}}</td><td class="mono">{{m.actions}}</td><td class="mono">{{m.tokensFmt}}</td><td class="mono">{{m.high}}</td><td class="mono">{{m.health}}</td><td><button class="btn" onClick="{{m.view}}" aria-pressed="{{m.viewing}}" style="min-height: 36px">檢視</button></td></tr>
                 </sc-for>
               </tbody>
             </table>
@@ -910,10 +837,10 @@ var ORIGIN = {
 };
 
 var MEMBERS = [
-  { id: "S12345", name: "陳怡君", title: "專員", actions: 24, tokens: 182400, high: 1 },
-  { id: "S12346", name: "李志豪", title: "專員", actions: 31, tokens: 246900, high: 2 },
-  { id: "S12347", name: "張雅婷", title: "資深專員", actions: 18, tokens: 131500, high: 1 },
-  { id: "S12348", name: "黃冠宇", title: "專員", actions: 27, tokens: 251200, high: 3 }
+  { id: "S12345", name: "陳怡君", title: "專員", actions: 24, tokens: 182400, high: 1, health: 92 },
+  { id: "S12346", name: "李志豪", title: "專員", actions: 31, tokens: 246900, high: 2, health: 85 },
+  { id: "S12347", name: "張雅婷", title: "資深專員", actions: 18, tokens: 131500, high: 1, health: 90 },
+  { id: "S12348", name: "黃冠宇", title: "專員", actions: 27, tokens: 251200, high: 3, health: 71 }
 ];
 
 var MEMBER_LOG = {
@@ -981,7 +908,7 @@ class Component extends DCLogic {
     input: SAMPLE, restored: false, wm: "visible", traced: false, verified: false, exported: false, originFilter: "all",
     queue: QUEUE0.map(function (q) { return Object.assign({}, q); }), selected: {},
     viewMember: null, scopeFilter: "any", installed: { k1: true }, reported: {}, publishScope: "dept", published: false,
-    skillApproved: {}, iwChecked: {}, iwDone: false, iwWarn: false, moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "", lastEvent: ""
+    skillApproved: {}, moment: null, spriteOpen: false, spriteLevel: 1, demoNote: "", lastEvent: ""
   };
 
   deid(text) {
@@ -1037,11 +964,11 @@ class Component extends DCLogic {
     // ---------- tabs ----------
     var tabDef = adminMode
       ? [["team", "團隊總覽"], ["approve", "待核准"], ["usage", "用量與分析"], ["audit", "風險與稽核"], ["skilladmin", "Skill 上架審核"]]
-      : [["overview", "總覽"], ["deid", "去識別化"], ["agent", "Agent 行為翻譯"], ["iwish", "iWish 臨櫃"], ["ledger", "浮水印與帳本"], ["market", "Skill 市場"]];
+      : [["overview", "總覽"], ["deid", "去識別化"], ["agent", "Agent 行為翻譯"], ["ledger", "浮水印與帳本"], ["market", "Skill 市場"]];
     var tabs = tabDef.map(function (d) {
       var on = d[0] === s.tab;
       var label = d[1];
-      return { label: label, pressed: on ? "true" : "false", bg: on ? brand : "#fcfcfb", fg: on ? "#ffffff" : "#444e4f", bd: on ? brand : "#c9c7bf", pick: function () { set({ tab: d[0] }); } };
+      return { label: label, pressed: on ? "true" : "false", bg: on ? accent : "#fcfcfb", fg: on ? "#ffffff" : "#444e4f", bd: on ? accent : "#c9c7bf", pick: function () { set({ tab: d[0] }); } };
     });
 
     // ---------- queue ----------
@@ -1077,7 +1004,7 @@ class Component extends DCLogic {
       { label: "今日 AI 行動", value: "7 筆", note: "其中 2 筆由 AI 代理發起" },
       { label: "本月 Token", value: "182,400", note: "配額 300,000，已用 61%" },
       { label: "待主管核准", value: pendingMine + " 筆", note: pendingMine ? "第 3 級動作已暫停，等待主管王建中" : "目前沒有等待中的動作" },
-      { label: "本週禁止級攔截", value: "0 次", note: "本週沒有第 4 級事件" }
+      { label: "本週禁止級攔截", value: "0 次", note: "AI 使用健康度 92 分" }
     ];
     var myTokenRows = [["行內 GAI 助理", 96200], ["家事宣告 Agent", 58900], ["Skill：客戶來函摘要", 18300], ["Skill：英文函件翻譯", 9000]];
     var myTokenSum = myTokenRows.reduce(function (a, r) { return a + r[1]; }, 0);
@@ -1098,7 +1025,6 @@ class Component extends DCLogic {
       return row;
     });
     var recent = ledger.slice(-4).reverse();
-    function lastHashForIw() { return ledger[ledger.length - 1].hash; }
     var of = s.originFilter;
     var ledgerShown = ledger.filter(function (r) { return of === "all" || r.origin === of; });
     var originStats = ["human", "ai", "aiApproved"].map(function (k) { return { label: ORIGIN[k].label, bg: ORIGIN[k].bg, fg: ORIGIN[k].fg, count: ledger.filter(function (r) { return r.origin === k; }).length }; });
@@ -1153,30 +1079,6 @@ class Component extends DCLogic {
       return { label: f[0], bg: f[1] ? "#fde1d3" : "#f0efec", fg: f[1] ? "#7a2e0e" : "#444e4f", arrow: i < arr.length - 1 };
     });
 
-    // ---------- iwish ----------
-    var IW_FIELDS = [
-      ["type", "交易類型", "臨櫃轉帳＋手機號碼變更", "語音", "", false],
-      ["from", "轉出帳戶", "本人活存 ****5678", "客戶資料（已驗證身分）", "", false],
-      ["to", "轉入帳戶", "807-1234-5674321", "語音", "・數字由語音辨識，請客戶覆誦確認", true],
-      ["payee", "受款人", "林小美", "語音", "・戶名須與轉入帳戶相符", true],
-      ["amount", "金額", "新臺幣 50,000 元", "語音", "・「五萬塊」轉換為數字", true],
-      ["phone", "新手機號碼", "0933-210-765", "照片（變更申請書）", "・手寫字以 OCR 辨識", true]
-    ];
-    var iwNeed = IW_FIELDS.filter(function (f) { return f[5]; }).length;
-    var iwChecked = IW_FIELDS.filter(function (f) { return f[5] && s.iwChecked[f[0]]; }).length;
-    var iwFields = IW_FIELDS.map(function (f) {
-      var on = !!s.iwChecked[f[0]];
-      return { label: f[1], value: f[2], source: f[3], note: f[4], needCheck: f[5], checked: on,
-        border: f[5] ? (on ? "#0ca30c" : "#ec835a") : "#e2e0da", cbId: "iw-" + f[0], cbLabel: "已核對：" + f[1],
-        toggle: function () { if (s.iwDone) return; var o = Object.assign({}, s.iwChecked); if (o[f[0]]) delete o[f[0]]; else o[f[0]] = true; set({ iwChecked: o, iwWarn: false }); } };
-    });
-    var iwStage = s.iwDone ? 3 : 2;
-    var iwSteps = ["① 客戶口述需求", "② 行員確認畫面", "③ 確認完成交易"].map(function (l, i, arr) {
-      var on = i + 1 === iwStage, past = i + 1 < iwStage;
-      return { label: l, bg: on ? brand : (past ? "#e9f6e9" : "#f0efec"), fg: on ? "#ffffff" : "#444e4f", arrow: i < arr.length - 1 };
-    });
-    var iwMsg = s.iwDone ? "交易完成，確認紀錄已與工號 T31508 綁定寫入帳本。" : (s.iwWarn ? "還有 " + (iwNeed - iwChecked) + " 個欄位未核對，請與客戶確認後再送出。" : "");
-
     // ---------- market ----------
     function visible(k) { return k.scope === "all" || (k.scope === "dept" && k.dept === me.dept) || (k.scope === "team" && k.team === me.team); }
     var vis = SKILLS.filter(visible);
@@ -1214,7 +1116,7 @@ class Component extends DCLogic {
       { label: "禁止級事件", value: blockedAll + " 筆", note: blockedAll ? "已自動攔截，待你檢視" : "本週已全部處理" }
     ];
     var members = MEMBERS.map(function (m) {
-      return { id: m.id, name: m.name, title: m.title, actions: m.actions, tokensFmt: fmt(m.tokens), high: m.high,
+      return { id: m.id, name: m.name, title: m.title, actions: m.actions, tokensFmt: fmt(m.tokens), high: m.high, health: m.health,
         viewing: s.viewMember === m.id ? "true" : "false", view: function () { set({ viewMember: s.viewMember === m.id ? null : m.id }); } };
     });
     var vm = MEMBERS.filter(function (m) { return m.id === s.viewMember; })[0];
@@ -1293,12 +1195,7 @@ class Component extends DCLogic {
       tierDemos: tierDemos, hasDemoNote: !!s.demoNote, demoNote: s.demoNote,
       tabs: tabs,
       isOverview: !adminMode && s.tab === "overview", isDeid: !adminMode && s.tab === "deid", isAgent: !adminMode && s.tab === "agent",
-      isLedger: !adminMode && s.tab === "ledger", isMarket: !adminMode && s.tab === "market", isIwish: !adminMode && s.tab === "iwish",
-      iwSteps: iwSteps, iwFields: iwFields, iwTodo: iwNeed - iwChecked, iwNeed: iwNeed, iwTotal: IW_FIELDS.length,
-      iwDone: s.iwDone, iwNotDone: !s.iwDone, iwHasMsg: !!iwMsg, iwMsg: iwMsg, iwMsgBg: s.iwDone ? "#e9f6e9" : "#fdeee6",
-      iwHash: fnv(lastHashForIw() + "iwish-T31508-1505"),
-      iwConfirm: function () { if (iwChecked < iwNeed) set({ iwWarn: true }); else set({ iwDone: true, iwWarn: false }); },
-      iwReset: function () { set({ iwChecked: {}, iwDone: false, iwWarn: false }); },
+      isLedger: !adminMode && s.tab === "ledger", isMarket: !adminMode && s.tab === "market",
       isTeam: adminMode && s.tab === "team", isApprove: adminMode && s.tab === "approve", isUsage: adminMode && s.tab === "usage",
       isAudit: adminMode && s.tab === "audit", isSkillAdmin: adminMode && s.tab === "skilladmin",
       userKpis: userKpis, myTokenBars: myTokenBars, tierRows: tierRows, recent: recent,
